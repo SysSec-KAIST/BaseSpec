@@ -1,0 +1,5 @@
+.*.swp
+*~
+cache
+__pycache__
+*.pickle

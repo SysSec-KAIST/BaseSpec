@@ -1,0 +1,5354 @@
+
+3GPP TS 24.011 V15.3.0 (2019-03)
+Technical Specification
+3rd Generation Partnership Project;
+Technical Specification Group Core Network and Terminals;
+Point-to-Point (PP) Short Message Service (SMS)
+support on mobile radio interface
+(Release 15)
+
+[pic]	[pic]
+The present document has been developed within the 3rd Generation Partnership Project (3GPP TM) and may be further elaborated for the purposes of 3GPP.
+The present document has not been subject to any approval process by the 3GPP Organisational Partners and shall not be implemented.
+This Specification is provided for future development work within 3GPP only. The Organisational Partners accept no liability for any use of this Specification.
+Specifications and reports for implementation of the 3GPP TM system should be obtained via the 3GPP Organisational Partners' Publications Offices.
+
+
+
+
+
+                      Keywords
+                      UMTS, GSM, SMS, network, LTE
+
+
+                      3GPP
+
+                      Postal address
+
+
+
+                      3GPP support office address
+                      650 Route des Lucioles - Sophia Antipolis
+                      Valbonne - FRANCE
+                      Tel.: +33 4 92 94 42 00 Fax: +33 4 93 65 47 16
+
+                      Internet
+                      http://www.3gpp.org
+
+
+Copyright Notification
+
+No part may be reproduced except as authorized by written permission.
+The copyright and the foregoing restriction extend to reproduction in all media.
+
+© 2019, 3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC).
+All rights reserved.
+
+UMTS™ is a Trade Mark of ETSI registered for the benefit of its members
+3GPP™ is a Trade Mark of ETSI registered for the benefit of its Members and of the 3GPP Organizational Partners
+LTE™ is a Trade Mark of ETSI registered for the benefit of its Members and of the 3GPP Organizational Partners
+GSM® and the GSM logo are registered and owned by the GSM Association
+
+         Contents
+
+
+Foreword	7
+
+1	Scope	8
+1.1	References	8
+1.2	Abbreviations	9
+
+2	Overview of Short Message Service (SMS) support	9
+2.1	Protocols and protocol architecture	10
+2.2	Use of channels (A/Gb mode only)	12
+2.3	Layer 2 SAPI 3 handling for circuit switched in A/Gb mode	13
+2.4	Layer 2 (LLC) GPRS support (A/Gb mode only)	13
+2.5	GSMS entity in Iu mode	14
+2.5A	ESMS entity in S1 mode	15
+2.5B	5GSMS entity in N1 mode	15
+2.6	MS support for SMS over GPRS	16
+2.7	MS support for device triggering short message	16
+
+3	Service definition	16
+3.1	General	16
+3.2	Service provided by the CM-sublayer	17
+3.2.1	Definition of primitives on the MS side	17
+3.2.1.1	MNSMS-ABORT-REQuest	17
+3.2.1.2	MNSMS-DATA-REQuest	18
+3.2.1.3	MNSMS-DATA-INDication	18
+3.2.1.4	MNSMS-ESTablish-REQuest	18
+3.2.1.5	MNSMS-ESTablish-INDication	18
+3.2.1.6	MNSMS-ERROR-INDication	18
+3.2.1.7	MNSMS-RELease-REQuest	18
+3.2.2	Definition of primitives on the network side	18
+3.2.2.1	MNSMS-ABORT-REQuest	19
+3.2.2.2	MNSMS-DATA-REQuest	19
+3.2.2.3	MNSMS-DATA-INDication	19
+3.2.2.4	MNSMS-ESTablish-REQuest	19
+3.2.2.5	MNSMS-ESTablish-INDication	19
+3.2.2.6	MNSMS-ERROR-INDication	20
+3.2.2.7	MNSMS-RELease-REQuest	20
+3.3	Service provided by SM-RL	20
+3.3.1	Definition of primitives on the MS side	20
+3.3.1.1	SM-RL-DATA-REQuest	20
+3.3.1.2	SM-RL-DATA-INDication	21
+3.3.1.3	SM-RL-MEMORY-AVAILABLE-REQuest	21
+3.3.1.4	SM-RL-REPORT-REQest	21
+3.3.1.5	SM-RL-REPORT-INDication	21
+3.3.2	Definition of primitives on the network side	21
+3.3.2.1	SM-RL-DATA-REQuest	22
+3.3.2.2	SM-RL-DATA-INDication	22
+3.3.2.3	SM-RL-MEMORY-AVAILABLE-INDication	22
+3.3.2.4	SM-RL-REPORT-REQuest	22
+3.3.2.5	SM-RL-REPORT-INDication	22
+
+4	[Void]	22
+
+5	CM-procedures	22
+5.1	General	22
+5.2	Short Message Control states	23
+5.2.1	SMC-CS states at the MS side of the radio interface	23
+5.2.1.1	Mobile Originating Case	23
+5.2.1.1.1	MO-Idle (State 0)	23
+5.2.1.1.2	MO-MM-connection pending (State 1)	23
+5.2.1.1.3	MO-Wait for CP-ACK (State 2)	23
+5.2.1.1.4	MO-MM-connection established (State 3)	23
+5.2.1.2	Mobile Terminating case	23
+5.2.1.2.1	MT-Idle (State 0)	23
+5.2.1.2.2	MT-Wait for CP-ACK (State 2)	23
+5.2.1.2.3	MT-MM-connection established (State 3)	23
+5.2.2	SMC-GP, SMC-EP and SMC-5G states at the MS side of the radio interface	24
+5.2.2.1	Mobile Originating Case	24
+5.2.2.1.1	MO-Idle (State 0)	24
+5.2.2.1.2	MO-GMM-connection pending (State 1) (Iu mode only)	24
+5.2.2.1.3	MO-Wait for CP-ACK (State 2)	24
+5.2.2.1.4	MO-Wait for CP-Data (State 3)	24
+5.2.2.1.5	MO-EMM-connection pending (State 4) (S1 mode only)	24
+5.2.2.2	Mobile Terminating case	24
+5.2.2.2.1	MT-Idle (State 0)	24
+5.2.2.2.2	MT-Wait for RP-ACK (State 1)	24
+5.2.2.2.3	MT-Wait for CP-ACK (State 2)	24
+5.2.3	SMC-CS states at the network side of the radio interface	24
+5.2.3.1	Mobile Originating Case	24
+5.2.3.1.1	MO-Idle (State 0)	25
+5.2.3.1.2	MO-Wait for CP-ACK (State 2)	25
+5.2.3.1.3	MO-MM-connection established (State 3)	25
+5.2.3.2	Mobile Terminating Case	25
+5.2.3.2.1	MT-Idle (State 0)	25
+5.2.3.2.2	MT-MM-connection pending (State 1)	25
+5.2.3.2.3	MT-Wait for CP-ACK (State 2)	25
+5.2.3.2.4	MT-MM-connection established (State 3)	25
+5.2.4	SMC-GP, SMC-EP and SMC-5G states at the network side of the radio interface	25
+5.2.4.1	Mobile Originating Case	25
+5.2.4.1.1	MO-Idle (State 0)	25
+5.2.4.1.2	MO-Wait for RP-ACK (State 1)	26
+5.2.4.1.3	MO-Wait for CP-ACK(State 2)	26
+5.2.4.2	Mobile Terminating Case	26
+5.2.4.2.1	MT-Idle (State 0)	26
+5.2.4.2.2	MT-Wait for CP-ACK (State 1)	26
+5.2.4.2.3	MT-Wait for CP DATA (State 2)	26
+5.3	Short Message Control procedures	26
+5.3.1	MM-connection establishment for circuit switched service	26
+5.3.2	RPDU transfer	27
+5.3.2.1	RPDU transfer for circuit switched service	27
+5.3.2.2	RPDU transfer for GPRS, EPS and 5GS	27
+5.3.3	Release of MM and CM connections	29
+5.3.4	Abnormal cases	29
+5.4	Concatenating short message or notification transfers	30
+
+6	SM-RL-procedures	31
+6.1	General	31
+6.2	Transition states of SMR entity	31
+6.2.1	SMR-states at the MS-side of the radio interface	31
+6.2.1.1	Idle (State 0)	31
+6.2.1.2	Wait for RP-ACK (State 1)	31
+6.2.1.2a	Wait to send RP-ACK (State 3)	31
+6.2.1.3	Wait for RETRANS TIMER (State 4)	32
+6.2.2	SMR-states at the network side of the radio interface	32
+6.2.2.1	Idle (State 0)	32
+6.2.2.2	Wait for RP-ACK (State 1)	32
+6.2.2.3	Wait to send RP-ACK (State 3)	32
+6.3	Short Message Relay procedures	32
+6.3.1	TPDU relaying	32
+6.3.2	[Void]	33
+6.3.3	Notification relaying	33
+6.3.3.1	MS side	33
+6.3.3.1.1	Idle state	33
+6.3.3.1.2	Wait for RP-ACK state	33
+6.3.3.1.3	Wait for RETRANS Timer state	34
+6.3.3.2	Network side	34
+6.3.3.2.1	Idle state	34
+6.3.3.2.2	Wait to Send RP-ACK state	34
+6.3.4	Abnormal cases	34
+
+7	Message functional definitions and content	35
+7.1	General	35
+7.2	Messages for short message or notification transfer on CM	35
+7.2.1	CP-DATA	35
+7.2.2	CP-ACK	35
+7.2.3	CP-ERROR	35
+7.3	Messages for short message and notification transfer on SM-RL	36
+7.3.1	RP-DATA	36
+7.3.1.1	RP-DATA (Network to Mobile Station)	36
+7.3.1.2	RP-DATA (Mobile Station to Network)	36
+7.3.2	RP-SMMA	36
+7.3.3	RP-ACK	37
+7.3.4	RP-ERROR	37
+
+8	Message format and information elements coding	37
+8.1	CP-messages	37
+8.1.1	General	37
+8.1.2	Protocol Discriminator and Transaction Identifier	38
+8.1.3	Message type	38
+8.1.4	Other required information elements	38
+8.1.4.1	CP-User data element	38
+8.1.4.2	CP-Cause element	38
+8.2	RP-messages	39
+8.2.1	General	39
+8.2.2	Message type indicator (MTI)	39
+8.2.3	Message reference	40
+8.2.4	[Void]	40
+8.2.5	Other required information elements	40
+8.2.5.1	Originator address element	40
+8.2.5.2	Destination address element	41
+8.2.5.3	RP-User data element	41
+8.2.5.4	RP-Cause element	42
+
+9	Handling of unknown, unforeseen, and erroneous protocol data	43
+9.1	General	43
+9.2	CP Error Handling	44
+9.2.1	Message too short	44
+9.2.2	Unknown or unforeseen transaction identifier	44
+9.2.3	Unknown or unforeseen message type	44
+9.2.4	Non-semantical mandatory information element errors	45
+9.2.5	Messages with semantically incorrect contents	45
+9.3	RP Error Handling	45
+9.3.1	Message too short	45
+9.3.2	Unknown or unforeseen Message Reference	46
+9.3.3	Unknown or unforeseen message type	46
+9.3.4	Non-semantical mandatory information element errors	46
+9.3.5	Messages with semantically incorrect contents	47
+
+10	Timers	47
+10.1	Timers when the MS is not using EPS services with control plane CIoT EPS optimization	47
+10.2	Timers when the MS is using EPS services with control plane CIoT EPS optimization	47
+
+Annex A (informative):	Arrow diagrams	48
+
+Annex B (normative):	SDL-description of the CM-layer	59
+
+B.1	Introduction	59
+
+Annex C (informative):	Arrow diagrams	120
+
+Annex D (normative):	SDL-description of the short message relay layer	126
+
+D.1	Introduction	126
+
+Annex E (informative):	Cause definition	134
+
+Annex F (informative):	LAPDm SAPI 3 handling for short message service	139
+
+Annex G (informative):	Change history	146
+
+
+
+
+         Foreword
+
+This Technical Specification (TS) has been produced by the 3rd Generation Partnership Project (3GPP).
+
+The present document defines the Short Message Service (SMS) support on mobile radio interface within the 3GPP system.
+
+The contents of the present document are subject to continuing work within the TSG and may change following formal TSG approval. Should the TSG modify the contents of the present document, it will be re-released by the TSG with an identifying change of release date and an increase in version number as follows:
+
+  Version x.y.z
+
+  where:
+
+    x	the first digit:
+
+       1	presented to TSG for information;
+
+       2	presented to TSG for approval;
+
+       3	or greater indicates TSG approved document under change control.
+
+    y	the second digit is incremented for all changes of substance, i.e. technical enhancements, corrections, updates, etc.
+
+    z	the third digit is incremented when editorial only changes have been incorporated in the document.
+
+
+
+         1	Scope
+
+The present document specifies the procedures used across the mobile radio interface by the signalling layer 3 function Short Message Control (SMC) and Short Message Relay function (SM-RL) for circuit switched in A/Gb mode, GPRS, EPS, and 5GS.
+
+
+1.1	References
+
+The following documents contain provisions which, through reference in this text, constitute provisions of the present document.
+
+  -	References are either specific (identified by date of publication, edition number, version number, etc.) or non-specific.
+
+  -	For a specific reference, subsequent revisions do not apply.
+
+  -	For a non-specific reference, the latest version applies. In the case of a reference to a 3GPP document (including a GSM document), a non-specific reference implicitly refers to the latest version of that document in the same Release as the present document.
+
+  [1]	Void.
+
+  [1a]	3GPP TR 21.905: "Vocabulary for 3GPP Specifications".
+
+  [2]	3GPP TS 23.040: "Technical realization of the Short Message Service (SMS) Point-to-Point (PP)".
+
+  [3a]	3GPP TS 23.060: "General Packet Radio Service (GPRS); Service description; Stage 2".
+
+  [3]	3GPP TS 44.006: "Mobile Station - Base Station System (MS - BSS) interface; Data Link (DL) layer specification".
+
+  [4]	3GPP TS 24.007: "Mobile radio interface signalling layer 3; General aspects".
+
+  [5]	3GPP TS 24.008: "Mobile radio interface layer 3 specification".
+
+  [5a]	3GPP TS 25.331: "Radio Resource Control (RRC); Protocol Specification".
+
+  [5b]	3GPP TS 33.102: "3G Security; Security Architecture".
+
+  [5c]	3GPP TS 42.017: "Subscriber Identity Modules (SIM); Functional characteristics".
+
+  [6a]	3GPP TS 44.064: "General Packet Radio Service (GPRS); Logical Link Control (LLC) layer specification ".
+
+  [6]	ISO 7498: "Information processing systems - Open Systems Interconnection - Basic Reference Model".
+
+  [7]	3GPP TS 44.018: "Mobile radio interface layer 3 specification; Radio Resource Control Protocol".
+
+  [8]	3GPP TS 25.413: "UTRAN Iu interface RANAP signalling".
+
+  [9]	3GPP TS 23.401: "General Packet Radio Service (GPRS) enhancements for Evolved Universal Terrestrial Radio Access Network (E-UTRAN) access"
+
+  [10]	3GPP TS 24.301: "Non-Access-Stratum (NAS) protocol for Evolved Packet System (EPS); Stage 3"
+
+  [11]	3GPP TS 23.272: "Circuit Switched Fallback in Evolved Packet System; Stage 2"
+
+  [12]	3GPP TS 29.118: "Mobility Management Entity (MME) – Visitor Location Register (VLR) SGs interface specification"
+
+  [13]	3GPP TS 23.501: " System Architecture for the 5G System; Stage 2".
+
+  [14]	3GPP TS 23.502: " Procedures for the 5G System; Stage 2".
+
+  [15]	3GPP TS 24.501: "Non-Access-Stratum (NAS) protocol for 5G System (5GS); Stage 3".
+
+  [16]	3GPP TS 29.518: "5G System; Access and Mobility Management Services; Stage 3".
+
+  [17]	3GPP TS 29.540: "5G System; SMS Services; Stage 3".
+
+
+1.2	Abbreviations
+
+For the purpose of the present document, the abbreviations given in 3GPP TR 21.905 [1a] and the following apply:
+
+  RR connection: a RR connection is a dedicated physical circuit switched domain connection used by the two RR or RRC peer entities to support the upper layers' exchange of information flows.
+
+  PS signalling connection: is a peer to peer UMTS connection between MS and CN packet domain node.
+
+  GPRS: Packet Services for GSM and UMTS system.
+
+  The label (A/Gb mode only): indicates this section or paragraph applies only to GSM system. For multi system case this is determined by the current serving radio access network.
+
+  The label (Iu mode only): indicates this section or paragraph applies only to UMTS system. For multi system case this is determined by the current serving radio access network.
+
+  The label (S1 mode only): indicates this section or paragraph applies only to Evolved Packet Core (EPC) and E-UTRAN access. For multi system case this is determined by the current serving radio access network.
+
+  In A/Gb mode,...: Indicates this paragraph applies only to GSM System. For multi system case this is determined by the current serving radio access network.
+
+  In Iu mode,...: Indicates this paragraph applies only to UMTS System. For multi system case this is determined by the current serving radio access network.
+
+  In S1 mode,...: Indicates this paragraph applies only to Evolved Packet Core and E-UTRAN access. For multi system case this is determined by the current serving radio access network.
+
+  In N1 mode: Indicates this paragraph applies only to 5G core network and NG-RAN access. For multi system case this is determined by the current serving radio access network.
+
+  SIM: Subscriber Identity Module (see 3GPP TS 42.017 [5c]). This specification makes no distinction between SIM and USIM.
+
+  MS: Mobile Station. This specification makes no distinction between MS and UE.
+
+For the purposes of the present document, the following terms and definitions given in 3GPP TS 24.301 [10] apply:
+
+  UE using EPS services with control plane CIoT EPS optimization
+
+
+2	Overview of Short Message Service (SMS) support
+
+The purpose of the Short Message Service is to provide the means to transfer messages between a GSM PLMN Mobile Station (MS) and a Short Message Entity via a Service Centre, as described in 3GPP TS 23.040 [2]. The terms "MO" - Mobile Originating - and "MT" - Mobile Terminating - are used to indicate the direction in which the short message is sent.
+
+The present document describes the procedures necessary to support the Short Message Service between the MS and the MSC or SGSN or MME or SMSF and vice versa, as described in 3GPP TS 23.040 [2].
+
+The procedures are based on services provided by the Mobility Management sublayer as described in 3GPP TS 24.007 [4]/3GPP TS 24.008 [5] for CS in A/Gb mode and CS/PS services in Iu mode, 3GPP 24.301 [10] for CS/PS services in S1 mode, 3GPP TS 24.501 [15] for N1 mode and the Logical Link Control layer described in 3GPP TS 44.064 [6a] for GPRS services. For CS/PS service in S1 mode, depending on network configuration and UE subscription data, network may choose to use either packet-switched service or circuit-switched service to provide SMS service. If circuit-switched service is used instead of packet-switched service, then the messages are tunneled through the MME. In this case the network also uses procedures described in 3GPP 29.118 [12].
+
+
+2.1	Protocols and protocol architecture
+
+In Iu mode only, integrity protected signalling (see 3GPP TS 24.008 [5], subclause 'Integrity Protection of Signalling Messages' and in general, see 3GPP TS 33.102 [5b]) is mandatory. In Iu mode only, all protocols shall use integrity protected signalling. Integrity protection of all SMS signalling messages is the responsibility of lower layers. It is the network which activates integrity protection. This is done using the security mode control procedure (3GPP TS 25.331 [5a]).
+
+The hierarchical model in figure 2.1a shows the layer structure of the MSC and the MS in A/Gb mode. The hierarchical model in figure 2.1c shows the layer structure of the SGSN and the MS in Iu mode. The hierarchical model in figure 2.1d shows the layer structure of the MSC and the MS in S1 mode. The hierarchical model in figure 2.1e shows the layer structure of the MME and the MS in S1 mode.
+
+
+
+|                    |       |   | |MSC      | |                                                              | |MS       | |
+|                    |       |   | |         | |                                                              | |         | |
+|SM-AL               |       |   | |         | |                                                              | |         | |
+|SM-TL               |       |   | |         | |                                                              | |         | |
+|SM-RL               |       |   | |SMR      | |<(((((( SM-RP protocol (((((>                                 | |SMR      | |
+|CM-sublayer         |       |   | |SMC      | |<(((((( SM-CP protocol (((((>                                 | |SMC      | |
+|MM-sublayer         |       |   | |         | |                                                              | |         | |
+|RR-sublayer         |       |   | |         | |                                                              | |         | |
+
+Figure 2.1a/3GPP TS 24.011: Protocol hierarchy for circuit-switched service
+
+The hierarchical model in figure 2.1b shows the layer structure of the SGSN and the MS in A/Gb mode.
+
+
+
+|                    |       |   | |SGSN     | |                                                              | |MS       | |
+|                    |       |   | |         | |                                                              | |         | |
+|SM-AL               |       |   | |         | |                                                              | |         | |
+|SM-TL               |       |   | |         | |                                                              | |         | |
+|SM-RL               |       |   | |SMR      | |<(((((( SM-RP protocol (((((>                                 | |SMR      | |
+|CM-sublayer         |       |   | |SMC      | |<(((((( SM-CP protocol (((((>                                 | |SMC      | |
+|LLC-sublayer        |       |   | |         | |                                                              | |         | |
+|GRR-sublayer        |       |   | |         | |                                                              | |         | |
+
+Figure 2.1b/3GPP TS 24.011: Protocol hierarchy for GPRS in A/Gb mode
+
+
+
+|                    |       |   | |SGSN     | |                                                              | |MS       | |
+|                    |       |   | |         | |                                                              | |         | |
+|SM-AL               |       |   | |         | |                                                              | |         | |
+|SM-TL               |       |   | |         | |                                                              | |         | |
+|SM-RL               |       |   | |SMR      | |<(((((( SM-RP protocol (((((>                                 | |SMR      | |
+|CM-sublayer         |       |   | |SMC      | |<(((((( SM-CP protocol (((((>                                 | |SMC      | |
+|GMM-sublayer        |       |   | |         | |                                                              | |         | |
+
+Figure 2.1c/3GPP TS 24.011: Protocol hierarchy for packet-switched service in Iu mode
+
+|                    |       |   | |MSC      | |                                                              | |MS       | |
+|                    |       |   | |         | |                                                              | |         | |
+|SM-AL               |       |   | |         | |                                                              | |         | |
+|SM-TL               |       |   | |         | |                                                              | |         | |
+|SM-RL               |       |   | |SMR      | |<(((((( SM-RP protocol (((((>                                 | |SMR      | |
+|CM-sublayer         |       |   | |SMC      | |<(((((( SM-CP protocol (((((>                                 | |SMC      | |
+|EMM-sublayer        |       |   | |         | |                                                              | |         | |
+
+Figure 2.1e/3GPP TS 24.011: Protocol hierarchy for packet-switched service in S1 mode
+
+|                                                              |                                                          |
+|TCH not allocated                                             | SDCCH                                                    |
+|TCH not allocated -> TCH allocated                            | SDCCH -> SACCH                                           |
+|TCH allocated                                                 | SACCH                                                    |
+|TCH allocated -> TCH not allocated                            | SACCH -> SACCH opt. SDCCH³                               |
+
+
+The short message service for GPRS shall be supported by a PDTCH.
+
+
+2.3	Layer 2 SAPI 3 handling for circuit switched in A/Gb mode
+
+General rule:
+
+  -	the Radio Resource Management (RR reference 3GPP TS 44.018 [7]) in the Mobile Station and on the network side (i.e. in the BSC) shall establish the acknowledged mode of operation on SAPI 3 whenever needed, i.e. when a message requiring SAPI 3 transfer shall be transmitted;
+
+  -	RR shall control the layer 2 also for SAPI 3, and keep knowledge of the mode;
+
+  -	the network side may initiate release of the acknowledged mode for SAPI 3 either explicitly (by the use of DISC- and UA-frames, see 3GPP TS 44.006 [3]) or indirectly by channel release (see 3GPP TS 44.018 [7]).
+
+This means:
+
+  -	the Mobile Station side will initiate establishment of SAPI 3 acknowledged mode in the case of mobile originating short message transfer;
+
+  -	the network side will initiate establishment of SAPI 3 acknowledged mode in the case of mobile terminating short message transfer;
+
+  -	the network side may choose to keep the channel and the acknowledged mode of operation to facilitate transfer of several short messages for or from the same Mobile Station. The queuing and scheduling function for this should reside in the MSC.
+
+
+2.4	Layer 2 (LLC) GPRS support (A/Gb mode only)
+
+It shall be possible for a GPRS-attached MS of any class (A, B, C) to send and receive short messages over GPRS radio channels.
+
+GPRS shall use the unacknowledged mode of LLC frame transfer as described in 3GPP TS 44.064 [6a], and shall use SAPI 7 to identify the SMS Logical Link Entity within the LLC layer.
+
+A description of the different GPRS MS classes can be found in 3GPP TS 23.060 [3a], and a brief overview is given below:
+
+  -	class A/B MSs may be able to send and receive short messages using either the MM sublayer (using SACCH or SDCCH) or the LLC layer (using PDTCH);
+
+  -	class C MSs may be able to send and receive short messages using only the LLC layer (using the PDTCH). The capability for GPRS-attached class-C MSs to receive and transmit SMS messages is optional.
+
+The GSMS entity for GPRS class A/B MS is shown in figure 2.2. The GSMS shall communicate with the MM entity via the GMMSMS-SAP for GPRS Class A/B MO SMS, in order to ascertain which transport service to use.
+
+SMS delivery via GPRS is normally a more radio resource efficient method than SMS delivery via CS in A/Gb mode. The delivery path for MO SMS is selected by the MS.
+
+[pic]
+
+Figure 2.2/3GPP TS 24.011: GSMS entity for GPRS Class A/B MS
+
+
+2.5	GSMS entity in Iu mode
+
+It shall be possible for a PS-attached MS of any mode of operation to send and receive short messages in Iu mode.
+
+A description of the different mode of operation UMTS MS can be found in 3GPP TS 23.060 [3a], and a brief overview is given below:
+
+  -	CS/PS mode of operation MSs may be able to send and receive short messages using either the MM sublayer or the GMM sublayer;
+
+  -	PS mode of operation MSs may be able to send and receive short messages using only GMM sublayer.
+
+The GSMS entity for CS/PS mode of operation MS is shown in figure 2.3. The GSMS shall communicate with the MM entity via the GMMSMS-SAP for CS/PS mode of operation MO SMS in Iu mode, in order to ascertain which transport service to use.
+
+The delivery path for MO SMS is selected by the MS.
+
+[pic]
+
+Figure 2.3/3GPP TS 24.011: GSMS entity for CS/PS mode of operation MS in Iu mode
+
+The Radio Resource Management shall use the 'low priority' class for the downlink transfer of SMS signalling messages. This means the core network shall set the SAPI value to 3 in RANAP Direct Transfer messages (see 3GPP TS 25.413 [8]) when sending SMS signalling messages over the Iu interface.
+
+
+2.5A	ESMS entity in S1 mode
+
+It shall be possible for an MS that is attached to CS and PS or attached for PS to send and receive short messages in S1 mode.
+
+A description of the different modes of operation for E-UTRAN MS can be found in 3GPP TS 24.301 [10]:
+
+  -	if the MS is attached to CS and PS, an overview of SMS services in S1 mode can be found in 3GPP TS 23.272 [11]. In S1 mode, the network may choose to use either circuit-switched service or packet-switched service to provide SMS services (see subclause 2.1). If circuit-switched service is used by the network, then messages are tunnelled through the PS domain between the MS and the MSC, and otherwise have no impact on PS domain operation. If packet-switched service is used by the network, then messages are transferred between the MS and the MME.
+
+  -	if the MS is attached for PS (see 3GPP TS 24.301 [10]), the MS may be able to send and receive short messages using only EMM sublayer. In this case, short messages are transferred between the MS and the MME.
+
+  NOTE:	If the MS is attached for PS with CIoT optimizations and the MS has requested "SMS only" and the MS is in NB-S1 mode, the MS sends and receives short messages using only EMM sublayer.
+
+The ESMS entity for CS/PS mode of operation MS is shown in figure 2.5A.
+
+[pic]
+
+Figure 2.5A/3GPP TS 24.011: ESMS entity for MS in S1 mode
+
+
+2.5B	5GSMS entity in N1 mode
+
+It shall be possible for an MS in N1 mode that is attached to the 5GCN to send and receive short messages.
+
+The 5GSMS entity for an MS in N1 mode is shown in figure 2.5B.
+
+[pic]
+
+Figure 2.5B/3GPP TS 24.011: 5GSMS entity for MS in N1 mode
+
+
+2.6	MS support for SMS over GPRS
+
+If the MS is attached to GPRS and the circuit-switched domain, and an SMS transfer via GPRS fails either due to a reception of an RP-ERROR message with cause #69 or due to the complete lack of network response, then the MS shall take the following actions:
+
+  -	The MS shall use the circuit-switched domain instead of GPRS for SMS transfer for an implementation dependent time. When a different PLMN is selected, if the MS preferred method is the sending of SMS over GPRS, the MS shall revert to trying an SMS transfer via GPRS.
+
+  -	If the SMS transfer failed in both GPRS and the circuit-switched domain, the user shall be informed.
+
+As an implementation option, the MS may also use the circuit-switched domain instead of GPRS for SMS transfer due to a reception of an RP-ERROR message with a cause different than #69.
+
+
+2.7	MS support for device triggering short message
+
+If the UE is attached for EPS services, supports non-IP PDN type as specified in 3GPP TS 24.301 [10] and supports the device triggering short message as specified in 3GPP TS 23.040 [2], then upon receiving a device triggering short message with the Application port addressing information element set to "trigger to establish a PDN connection of non-IP PDN type using the default APN" as specified in 3GPP TS 23.040 [2], the UE shall send to the ESM entity as specified in 3GPP TS 24.007 [4] an indication requesting establishment of a PDN connection for non-IP PDN type using the default APN.
+
+
+3	Service definition
+
+
+3.1	General
+
+The layer service is described as a set of service primitives. These service primitives are abstractions and attempt to capture only those details of the interaction between the entities that are aspects of the layer service itself. A service primitive neither specifies nor constrains the implementation of entities or the interface between them.
+
+The general syntax of a primitive and the initials of them are in line with the 24-series of 3GPP Technical Specifications.
+
+  NOTE:	In order to limit the number of primitives and state definitions to a reasonable amount, a description method has been chosen which does not claim to be totally in line with the formal description method of the layered ISO reference model (ISO 7498) for Open Systems Interconnection.
+
+
+3.2	Service provided by the CM-sublayer
+
+In order to support the Short Message Service, the CM-sublayer provides services to the Short Message Relay Layer.
+
+The CM-sublayer services are provided using layer specific functions and lower layer services offered to the CM-sublayer, controlled by short message service control entities called SMCs.
+
+An SMC entity in the MS communicates with an SMC entity in the MSC or the SGSN or the MME or the SMSF by means of a peer protocol, SM-CP (Short Message Service Control Protocol). The arrow diagrams in annex A give an overview of the messaging on the CM-sublayer during a short message transfer.
+
+A mobile station supporting the Short Message Service shall have a minimum of two SMC entities per service type (i.e. two for CS GSM and two for GPRS). This enables the MS to receive MT messages during an MO message transfer.
+
+To ensure that an MS having the minimum of two SMC entities is able to receive MT messages during an MO message transfer, and to send MO messages during MT message transfer, parallel message transfer in the same direction is prohibited. This means that the SMC entities shall not simultaneously perform messaging in the same direction. The rules for concatenation of message transfers are described in subclause 5.4.
+
+The MSC or the SGSN or the MME or the SMSF shall have a minimum of two SMC entities available each during an MT message transfer to a mobile station, one being reserved for MO message transfer. In an MO message transfer, the MSC or the SGSN or the MME or the SMSF shall have one SMC entity reserved for handling of an MT message.
+
+
+3.2.1	Definition of primitives on the MS side
+
+This subclause defines the service primitives used on the MS side. Table 3.1/3GPP TS 24.011 gives an overview of the service primitives and main parameter linked to the primitives. All necessary control parameters to be used in the Short Message Service are defined in clause 7. All MNSMS service primitives defined in this subclause are passed to an SMC-entity.
+
+Table 3.1/3GPP TS 24.011: MNSMS service primitives on the MS-side
+
+|SERVICE PRIMITIVES                                   |PARAMETER                          |
+|NAME                                   |TYPE          |                                   |
+|MNSMS-ABORT-                           |Req           |Cause                              |
+|MNSMS-DATA                             |Req           |MT RPDU                            |
+|                                       |Ind           |MO RPDU                            |
+|MNSMS-EST-                             |Req           |MO RPDU                            |
+|                                       |Ind           |MT RPDU                            |
+|MNSMS-ERROR-                           |Ind           |Cause                              |
+|MNSMS-REL-                             |Req           |Cause                              |
+
+
+
+3.2.1.1	MNSMS-ABORT-REQuest
+
+A request from an SMR entity to release a CM-connection in abnormal cases.
+
+When the CM-sublayer receives this request, and if the MM connection exists, it shall form and send the CP-ERROR message. Irrespective of whether or not the CP-ERROR message was sent, the CM-sublayer shall then release the lower layer services.
+
+
+3.2.1.2	MNSMS-DATA-REQuest
+
+A request from an SMR entity to send a RPDU on the established CM-connection.
+
+The SMC entity forms the CP-DATA message, the user information element being the RPDU, and transfers the message by means of the lower layer services.
+
+  NOTE:	After reception of an incoming RP-DATA, the SMR entity typically returns the acknowledgement RP-ACK, or an error indication, RP-ERROR, to the Service Centre.
+
+
+3.2.1.3	MNSMS-DATA-INDication
+
+An indication used by the SMC entity to pass the user information element (RPDU) of a received CP-DATA message to SM-RL.
+
+  NOTE:	The RPDU is typically an RP-ACK or an RP-ERROR. Normally this service is used to report the outcome of either a MO message transfer attempt or a mobile station memory available notification attempt.
+
+
+3.2.1.4	MNSMS-ESTablish-REQuest
+
+A request from an SMR entity to establish a CM-connection. The request contains a RP-DATA UNIT as a parameter. It implies the:
+
+  -	establishment of a CM-connection for this SMR entity;
+
+  -	forming of the CP-DATA message containing the RPDU; and
+
+  -	passing of CP-DATA to the MM-sublayer.
+
+
+3.2.1.5	MNSMS-ESTablish-INDication
+
+An indication used by the SMC entity to pass the SM-user information (RPDU) of a received CP-DATA message to SM-RL. It implies completion of the establishment of the CM-connection for this SMR entity.
+
+
+3.2.1.6	MNSMS-ERROR-INDication
+
+An indication used by the SMC entity to pass error information to SM-RL. The error information may be local or relayed by the CP-ERROR message.
+
+Use of this service primitive implies release of both CM and MM-connection.
+
+
+3.2.1.7	MNSMS-RELease-REQuest
+
+A request to release the CM-connection (if it still exists).
+
+Use of this service primitive implies release of the associated CM and MM-connections.
+
+
+3.2.2	Definition of primitives on the network side
+
+This subclause defines the service primitives used on the network side.
+
+Table 3.2/3GPP TS 24.011 gives an overview of the service primitives and linked main parameter. All MNSMS service primitives defined in this subclause are passed to an SMC-entity.
+
+Table 3.2/3GPP TS 24.011: MNSMS service primitives on the network side
+
+|SERVICE PRIMITIVES                                   |PARAMETER                          |
+| NAME                                  |TYPE          |                                   |
+| MNSMS-ABORT-                          |Req           |Cause                              |
+|MNSMS-DATA                             |Req           |MO RPDU                            |
+|                                       |Ind           |MT RPDU                            |
+| MNSMS-EST-                            |Req           |MT RPDU                            |
+|                                       |Ind           |MO RPDU                            |
+| MNSMS-ERROR-                          |Ind           |Cause                              |
+| MNSMS-REL-                            |Req           |Cause                              |
+
+
+
+3.2.2.1	MNSMS-ABORT-REQuest
+
+A request from an SMR entity to release a CM-connection in abnormal cases.
+
+When the CM-sublayer receives this request, it may form and send the CP-ERROR message to release the connection. Irrespective of whether or not the CP-ERROR message was sent, the CM-sublayer shall then release the lower layer services.
+
+
+3.2.2.2	MNSMS-DATA-REQuest
+
+A request from an SMR entity to send a RPDU on the established CM-connection.
+
+The SMC entity forms the CP-DATA message, the user information element being the RPDU, and transfers the message by means of the lower layer services.
+
+  NOTE:	After reception of an incoming RP-DATA or RP-SMMA the RPDU typically returns the acknowledgement, RP-ACK, or an error indication RP-ERROR, to the Mobile Station.
+
+
+3.2.2.3	MNSMS-DATA-INDication
+
+An indication used by the SMC entity to pass the user information element (RPDU) of a received CP-DATA message to SM-RL.
+
+  NOTE:	The RPDU is typically an RP-ACK or an RP-ERROR. Normally this is used to report the outcome of a MT messaging attempt.
+
+
+3.2.2.4	MNSMS-ESTablish-REQuest
+
+A request from an SMR entity to transmit a RPDU, containing the SM-user information element; it implies the:
+
+  -	establishment of a CM-connection for this SMR entity;
+
+  -	forming of the CP-DATA message containing the RPDU; and
+
+  -	passing of CP-DATA to the MM-sublayer.
+
+
+3.2.2.5	MNSMS-ESTablish-INDication
+
+An indication used by the SMC entity to pass the SM-user information (RPDU) of a received CP-DATA message to SM-RL; it implies completion of the establishment of the CM-connection for this SMR entity.
+
+
+3.2.2.6	MNSMS-ERROR-INDication
+
+An indication used by the SMC entity to pass error information to SM-RL. The error information may be local or relayed by the CP-ERROR message.
+
+Use of the service primitive implies release of both CM and MM-connection.
+
+
+3.2.2.7	MNSMS-RELease-REQuest
+
+A request to release the CM-connection (if it still exists).
+
+Use of this service implies release of the associated CM and MM-connections.
+
+
+3.3	Service provided by SM-RL
+
+In order to support the Short Message Service, the Short Message Relay Layer provides services to the Short Message Transfer Layer.
+
+The Short Message Relay Layer services are provided using layer specific functions and lower layer services offered to the Short Message Relay Layer, controlled by short message control entities called SMRs.
+
+An SMR entity in the MS communicates with an SMR entity in the MSC by means of a peer protocol, SM-RP (Short Message Relay Protocol). The arrow diagrams in annex C give an overview of the messaging on the Short Message Relay Layer used for the Short Message Service. The diagrams in annex C indicate a layer RL. This is not a layer, but the functional interface to the fixed network. The SM-RL is the upper layer in the MSC. Consequently the service primitives passed between SM-RL and RL indicate the interworking function.
+
+The requirements on the SM-RL are the same as for the CM-sublayer. This means that there is exactly one SMR entity for each SMC entity, operating as described in subclause 3.2.
+
+
+3.3.1	Definition of primitives on the MS side
+
+This subclause defines the service primitives used on the MS side. Table 3.3/3GPP TS 24.011 gives an overview of the service primitives and linked main parameters. All SM-RL service primitives defined in this subclause are passed on an SM-RL-connection.
+
+Table 3.3/3GPP TS 24.011: SM-RL service primitives on the mobile station side
+
+|SERVICE PRIMITIVES                                   |PARAMETER                          |
+| NAME                                  |TYPE          |                                   |
+|SM-RL-DATA-                            |Req           |MO SMS-TPDU                        |
+|                                       |Ind           |MT SMS-TPDU                        |
+|SM-RL-MEMORY                           |Req           |See subclause 3.3.1.3              |
+|AVAILABLE                              |              |                                   |
+|SM-RL-REPORT-                          |Req           |See subclause 3.3.1.4              |
+|                                       |Ind           |See subclause 3.3.1.5              |
+
+
+
+3.3.1.1	SM-RL-DATA-REQuest
+
+A request from the SM-TL entity to pass the SMS-TPDU and necessary control information to SM-RL; it implies:
+
+  -	establishment of an SM-RL connection for MO message transfer;
+
+  -	forming of the RP-DATA message, containing the SMS-TPDU;
+
+  -	transfer of the RP-DATA message as an RPDU in an MNSMS-EST-Req.
+
+The purpose of this service is to relay the SMS-TPDU from the mobile station to the peer entity in the MSC.
+
+
+3.3.1.2	SM-RL-DATA-INDication
+
+An indication used by the SMR entity to pass the SMS-TPDU and necessary control information of a received RP-DATA message to SM-TL.
+
+
+3.3.1.3	SM-RL-MEMORY-AVAILABLE-REQuest
+
+When received without a parameter, this is a request from the SM-TL entity to pass the necessary control information to SM-RL; it implies:
+
+  -	establishment of an SM-RL-connection for transfer of the notification to the network that the mobile has memory available to receive one or more short messages;
+
+  -	forming the RP-SM-MEMORY-AVAILABLE message; and
+
+  -	transfer of the RP-SM-MEMORY-AVAILABLE message as an RPDU in an MNSMS-EST-Req.
+
+The SM-TL entity may abort the transmission of an RP-SM-MEMORY-AVAILABLE message by use of a SM-RL-MEMORY-AVAILABLE-REQuest with the added parameter, SMS-MEM-NOTIF-ABORT, being present. This parameter is, of course, defined only on the interface between the SM-TL and SMR entities within the mobile station. Use of this request with the added parameter will have no effect on messages already given to the lower layers for transmission, but will only abort retransmission of the RP-SM-MEMORY-AVAILABLE message by the SMR entity.
+
+
+3.3.1.4	SM-RL-REPORT-REQest
+
+A request used by the SM-TL to relay the RP-ACK or RP-ERROR message from the mobile station to the network. This implies transfer of the RP-ACK or RP-ERROR message as an RPDU in an MNSMS-DATA-Req.
+
+
+3.3.1.5	SM-RL-REPORT-INDication
+
+An indication used by the SMR entity to pass an acknowledgement (RP-ACK) or error information to SM-TL. The error information may be local or relayed by the RP-ERROR message; it consists of an appropriate cause and optionally extended diagnostic information.
+
+
+3.3.2	Definition of primitives on the network side
+
+This subclause defines the service primitives used on the network side.
+
+Table 3.4/3GPP TS 24.011 gives an overview of the service primitives and linked main parameter. All SM-RL service primitives defined in this subclause are passed on an SM-RL-connection.
+
+Table 3.4/3GPP TS 24.011: SM-RL service primitives on the network side
+
+|SERVICE PRIMITIVES                                   |PARAMETER                          |
+| NAME                                  |TYPE          |                                   |
+|SM-RL-DATA-                            |Req           |MT SMS-TPDU                        |
+|                                       |Ind           |MO SMS-TPDU                        |
+|SM-RL-MEMORY                           |Ind           |None                               |
+|AVAILABLE                              |              |                                   |
+|SM-RL-REPORT-                          |Req           |See subclause 3.3.2.4              |
+|                                       |Ind           |See subclause 3.3.2.5              |
+
+
+
+3.3.2.1	SM-RL-DATA-REQuest
+
+A request from RL to pass the SMS-TPDU to SM-RL; it implies:
+
+    -	establishment of a SM-RL-connection for MT message transfer;
+
+    -	forming of the RP-DATA message, containing the SMS-TPDU; and
+
+    -	transfer of the RP-DATA message as an RPDU in an MNSMS-EST-Req.
+
+The purpose of this service is to relay the SMS-TPDU from the MSC to the peer entity in the mobile station.
+
+
+3.3.2.2	SM-RL-DATA-INDication
+
+An indication used by the SMR entity to pass the SMS-TPDU of a received RP-DATA message to RL.
+
+
+3.3.2.3	SM-RL-MEMORY-AVAILABLE-INDication
+
+An indication used by the SMR entity to pass to RL the notification to the network that the mobile has memory available to receive one or more short messages.
+
+
+3.3.2.4	SM-RL-REPORT-REQuest
+
+A request used by RL (the network interworking function) to relay the RP-ACK or RP-ERROR message from the network to the mobile station. This implies transfer of the RP-ACK or RP-ERROR message as an RPDU in an MNSMS-DATA-Req.
+
+
+3.3.2.5	SM-RL-REPORT-INDication
+
+An indication used by the SMR entity to pass an acknowledgement (RP-ACK) or error information to RL. The error information may be local or relayed by the RP-ERROR message.
+
+
+4	[Void]
+
+
+5	CM-procedures
+
+
+5.1	General
+
+This clause describes the procedures used by the SMC entity on the Connection Management sublayer. An SMC entity communicates with a corresponding peer entity using an MM-connection for CS in A/Gb and Iu mode, or the LLC layer for GPRS in A/Gb mode, or the GMM-connection for PS in Iu mode, or the EMM-connection for EPS in S1 mode if packet-switched service is used, or through the MME for S1 mode if circuit-switched service is used, or through the AMF for N1 mode.
+
+Multiple MM-connections may be established at the same time, allowing parallel transactions. The description of the procedures is related to one single transaction.
+
+For circuit switched service, the CM-procedures described can only be performed if an MM-connection has been established between the mobile station and the network.
+
+For GPRS, no connection has to be established, and thus the CM procedures for GPRS reflect this. Detailed SDL diagrams for SMC entities are contained in annex B.
+
+For EPS when packet-switched service is used, detailed SDL diagrams for SMC entities are contained in annex B.
+
+
+5.2	Short Message Control states
+
+The state transition diagrams for the MO and MT SMC entities on both the MS side and network side are contained in annex B.
+
+
+5.2.1	SMC-CS states at the MS side of the radio interface
+
+
+5.2.1.1	Mobile Originating Case
+
+The states described in this clause are for an SMC entity in an MS handling mobile originating short message transfer and notification to the network that the mobile has memory available to receive one or more short messages (referred to below as "notification").
+
+
+5.2.1.1.1	MO-Idle (State 0)
+
+This state exists when the MO-SMC entity is in idle mode, or when an MO short message transfer or notification ends in a normal or abnormal way.
+
+
+5.2.1.1.2	MO-MM-connection pending (State 1)
+
+This state exists when the MO-SMC has requested the establishment of an MM-connection.
+
+
+5.2.1.1.3	MO-Wait for CP-ACK (State 2)
+
+This state exists after the MO-SMC has initiated the transfer of a CP-DATA message.
+
+
+5.2.1.1.4	MO-MM-connection established (State 3)
+
+This state exists when the MO-SMC has:
+
+  -	received the acknowledgement, CP-ACK; or
+
+  -	received the message CP-DATA (including sending of the associated CP-ACK).
+
+
+5.2.1.2	Mobile Terminating case
+
+The states described in this subclause are for an SMC entity in an MS handling mobile terminating short message transfer.
+
+
+5.2.1.2.1	MT-Idle (State 0)
+
+This state exists when the MT-SMC entity is in idle mode, or when a short message transfer ends in a normal or abnormal way.
+
+
+5.2.1.2.2	MT-Wait for CP-ACK (State 2)
+
+This state exists after the MT-SMC has initiated the transfer of a CP-DATA message.
+
+
+5.2.1.2.3	MT-MM-connection established (State 3)
+
+This state exists when the MT-SMC has:
+
+  -	received the acknowledgement, CP-ACK; or
+
+  -	received the message CP-DATA (including sending of the associated CP-ACK).
+
+
+5.2.2	SMC-GP, SMC-EP and SMC-5G states at the MS side of the radio interface
+
+
+5.2.2.1	Mobile Originating Case
+
+The states described in this clause are for an SMC-GP entity in a GPRS MS, and for an SMC-EP entity in an EPS MS, and for an SMC-5G entity in a 5GS MS handling mobile originating short message transfer and notification to the network that the mobile has memory available to receive one or more short messages (referred to below as "notification").
+
+
+5.2.2.1.1	MO-Idle (State 0)
+
+This state exists when the MO-SMC entity is in idle mode, or when an MO short message transfer or notification ends in a normal or abnormal way.
+
+
+5.2.2.1.2	MO-GMM-connection pending (State 1) (Iu mode only)
+
+This state exists when the MO-SMC has requested the establishment of a PS signalling connection.
+
+
+5.2.2.1.3	MO-Wait for CP-ACK (State 2)
+
+This state exists after the MO-SMC has initiated the transfer of a CP-DATA message.
+
+
+5.2.2.1.4	MO-Wait for CP-Data (State 3)
+
+This state exists when the MO-SMC has received the acknowledgement, CP-ACK.
+
+
+5.2.2.1.5	MO-EMM-connection pending (State 4) (S1 mode only)
+
+This state exists when the MO-SMC has requested the establishment of a NAS signalling connection.
+
+
+5.2.2.2	Mobile Terminating case
+
+The states described in this subclause are for an SMC-GP entity in an GPRS MS handling mobile terminating short message transfer.
+
+
+5.2.2.2.1	MT-Idle (State 0)
+
+This state exists when the MT-SMC entity is in idle mode, or when a short message transfer ends in a normal or abnormal way.
+
+
+5.2.2.2.2	MT-Wait for RP-ACK (State 1)
+
+This state exists after the MT-SMC has received the message CP-DATA (including sending of the associated CP-ACK).
+
+
+5.2.2.2.3	MT-Wait for CP-ACK (State 2)
+
+This state exists when the MT-SMC has initiated  the transfer of the CP DATA message.
+
+
+5.2.3	SMC-CS states at the network side of the radio interface
+
+
+5.2.3.1	Mobile Originating Case
+
+The states described in this subclause are for an SMC entity in an MSC handling both mobile originating short message transfer and notification to the network that the mobile has memory available to receive one or more short messages (referred to below as "notification").
+
+
+5.2.3.1.1	MO-Idle (State 0)
+
+This state exists when the MO-SMC entity is in idle mode, or when a short message transfer or notification ends in a normal or abnormal way.
+
+
+5.2.3.1.2	MO-Wait for CP-ACK (State 2)
+
+This state exists after the MO-SMC has initiated the transfer of a CP-DATA message.
+
+
+5.2.3.1.3	MO-MM-connection established (State 3)
+
+This state exists when the SMC has:
+
+  -	received the acknowledgement, CP-ACK; or
+
+  -	received the message CP-DATA (including sending of the associated CP-ACK).
+
+
+5.2.3.2	Mobile Terminating Case
+
+The states described in this subclause are for an SMC entity in an MSC handling mobile terminating short message transfer.
+
+
+5.2.3.2.1	MT-Idle (State 0)
+
+This state exists when the MT-SMC entity is in idle mode, or when a short message transfer ends in a normal or abnormal way.
+
+
+5.2.3.2.2	MT-MM-connection pending (State 1)
+
+This state exists when the MT-SMC has requested an MM-connection for mobile terminating short message transfer.
+
+
+5.2.3.2.3	MT-Wait for CP-ACK (State 2)
+
+This state exists after the SMC has initiated the transfer of a CP-DATA message.
+
+
+5.2.3.2.4	MT-MM-connection established (State 3)
+
+This state exists when the SMC has:
+
+  -	received the acknowledgement, CP-ACK; or
+
+  -	received the message CP-DATA (including sending of the associated CP-ACK).
+
+
+5.2.4	SMC-GP, SMC-EP and SMC-5G states at the network side of the radio interface
+
+
+5.2.4.1	Mobile Originating Case
+
+The states described in this subclause are for an SMC-GP entity in an SGSN and for an SMC-EP entity in an MSC or an MME and an SMC-5G entity in a SMSF handling both mobile originating short message transfer and notification to the network that the mobile has memory available to receive one or more short messages (referred to below as "notification").
+
+
+5.2.4.1.1	MO-Idle (State 0)
+
+This state exists when the MO-SMC entity is in idle mode, or when a short message transfer or notification ends in a normal or abnormal way.
+
+
+5.2.4.1.2	MO-Wait for RP-ACK (State 1)
+
+This state exists after the MO-SMC has received the message CP-DATA (including sending of the associated CP-ACK).
+
+
+5.2.4.1.3	MO-Wait for CP-ACK(State 2)
+
+This state exists when the SMC has received the RP acknowledgement, RP-ACK
+
+
+5.2.4.2	Mobile Terminating Case
+
+The states described in this subclause are for an SMC-GP entity in an SGSN and the SMC-EP entity in the MSC or the MME handling mobile terminating short message transfer.
+
+
+5.2.4.2.1	MT-Idle (State 0)
+
+This state exists when the MT-SMC entity is in idle mode, or when a short message transfer ends in a normal or abnormal way.
+
+
+5.2.4.2.2	MT-Wait for CP-ACK (State 1)
+
+This state exists after the SMC has initiated the transfer of a CP-DATA message.
+
+
+5.2.4.2.3	MT-Wait for CP DATA (State 2)
+
+This state exists when the SMC has received the acknowledgement, CP-ACK.
+
+
+5.3	Short Message Control procedures
+
+The procedures needed for short message control are:
+
+  -	connection establishment procedures;
+
+  -	RP Data Unit (RPDU) transfer procedures;
+
+  -	connection release procedures; and
+
+  -	procedures for abnormal cases.
+
+The procedures of subclause 5.3 are described with respect to one particular instance of an SMC entity. Different SMC entities are identified by their Transaction Identifier. Messages with Transaction Identifiers that do not correspond to this particular instance of the SMC entity are not treated by it.
+
+
+5.3.1	MM-connection establishment for circuit switched service
+
+When an SMC entity is in the Idle state and transfer of an RPDU is requested, the peer to peer connection between the MM-sublayers in the MS and the network (MSC) has to be established.
+
+The SMC entity on the originating side requests the MM-sublayer to establish an MM-connection, and enters the MM-Connection Pending state.
+
+After completion of the MM-connection establishment, a confirmation is given to the originating side to indicate that the MM sublayer is ready for RPDU transfer.
+
+The MM-connection establishment is indicated to the SMC entity at the destination side when the CP-DATA message has been received by the MM-sublayer (in line with 3GPP TS 24.008 [5]). The destination side SMC entity then sends a CP-ACK and enters the MM-Connection Established state.
+
+
+5.3.2	RPDU transfer
+
+
+5.3.2.1	RPDU transfer for circuit switched service
+
+When an SMC entity in the MM-Connection Pending state is informed that an MM-connection has been established, the SMC entity forwards the CP-DATA message containing the RPDU, sets the timer TC1* and enters the Wait for CP-ACK state.
+
+The value of TC1* may vary with the length of the CP-DATA message and the channel type that is being used for its transmission. However, the value of TC1* shall be sufficiently great to allow the lower layers to transmit the CP-DATA and CP-ACK messages and to allow for some retransmissions of layer 2 frames.
+
+If an SMC entity in the Wait for CP-ACK state gets an indication that the CP-DATA message has probably been lost (e.g. due to dedicated channel assignment, hand over, assignment failure, hand over failure, or a SAPI 3 data link failure) then, as an implementation option, that SMC entity may reduce the time until expiry of TC1*.
+
+If the timer TC1* expires in the Wait for CP-ACK state, the CP-DATA message is retransmitted and the state Wait for CP-ACK is re-entered. The maximum number of CP-DATA message retransmissions is an implementation option but shall be either 1, 2 or 3. If the timer TC1* expires after the maximum number of retransmission attempts, an error indication is passed to SM-RL and an MM-connection release request is passed to the MM-sublayer. The Idle state is then entered.
+
+On receipt of the CP-ACK message in the Wait for CP-ACK state, the SMC resets the timer TC1* and enters the MM-Connection Established state.
+
+When receiving a CP-DATA message in the MM-Connection Established state, the SMC entity checks the parameters relevant to the CP protocol. If these are valid, the RPDU is passed to the SM-RL, the CP-ACK message is sent and the state MM-Connection Established is re-entered.
+
+If an SMC entity in the Idle state is unable to accept a CP-DATA message, it sends a CP-ERROR message followed by an MM-connection release request and then enters the Idle state.
+
+When receiving a MNSMS-DATA-Req primitive in the MM-Connection Established state, the SMC entity forwards a CP-DATA message containing the RPDU to the MM-sublayer, sets the timer TC1* and enters the Wait for CP-ACK state.
+
+
+5.3.2.2	RPDU transfer for GPRS, EPS and 5GS
+
+In A/Gb mode, when an SMC-GP or SMC-EP entity is in the Idle state and transfer of an RPDU is requested, the SMC-GP or SMC-EP entity on the originating side forwards the CP-DATA message containing the R-PDU to the lower layer, and sets the timer TC1* and enters the Wait for CP-ACK state. In A/Gb mode, for the SMC-GP entity, the lower layer is the LLC sublayer. For the SMC-EP entity on the MS side, the lower layer is EMM. For the SMC-EP entity on the network side, the lower layer can be either the SGs association as described in 3GPP TS 29.118 [12] or the EMM sublayer. For the SMC-5G entity on the MS side, the lower layer is 5GMM. For the SMC-5G entity on the network side the lower layer is provided by the Namf Service Based Interface as described in 3GPP TS 29.518 [16] and by the Nsmsf Service Based Interface as described in 3GPP TS 29.540 [17].
+
+In Iu mode, when an SMC-GP entity in the MS side is in the Idle state and transfer of an RPDU is requested:
+
+  -	the SMC-GP entity on the originating side requests the GMM sublayer to establish a PS signalling connection, and enters the GMM-Connection Pending state.
+
+  -	after completion of the PS signalling connection establishment, a confirmation is given to the originating side to indicate that the GMM sublayer is ready for RPDU transfer; and.
+
+  -	after confirmation of the PS signalling connection establishment, the SMC-GP entity on the originating side forwards the CP-DATA message to the GMM sublayer. This contains the RPDU, and also the SMC-GP entity sets the timer TC1* and enters the Wait for CP-ACK state.
+
+In S1 mode, when an SMC-EP entity in the MS side is in the Idle state and transfer of an RPDU is requested:
+
+  -	if the MS is not using Control plane CIoT EPS optimization:
+
+    1)	the SMC-EP entity on the originating side requests the EMM sublayer to establish a NAS signalling connection, and enters the EMM-Connection Pending state;
+
+    2)	after completion of the NAS signalling connection establishment, a confirmation is given to the originating side to indicate that the EMM sublayer is ready for RPDU transfer; and
+
+    3)	after confirmation of the NAS signalling connection establishment, the SMC-EP entity on the originating side forwards the CP-DATA message to the EMM sublayer. This contains the RPDU, and also the SMC-EP entity sets the timer TC1* and enters the Wait for CP-ACK state; or
+
+  -	if the MS is using Control plane CIoT EPS optimization, the SMC-EP entity on the originating side forwards the CP-DATA message that contains the RPDU to the EMM sublayer when requesting the EMM sublayer to establish a NAS signalling connection. The SMC-EP entity then sets the timer TC1* and enters the Wait for CP-ACK state immediately.
+
+  NOTE:	If the MS in idle mode is using Control plane CIoT optimization, the first CP-DATA message is sent by piggybacking on the CONTROL PLANE SERVICE REQUEST message during the service request procedure as specified in 3GPP 24.301 [10].
+
+In N1 mode, when an SMC-5G entity in the MS side is in the Idle state and transfer of an RPDU is requested:
+
+  1)	the SMC-5G entity on the originating side requests the 5GMM sublayer to establish a NAS signalling connection;
+
+  2)	after completion of the NAS signalling connection establishment, a confirmation is given to the originating side to indicate that the 5GMM sublayer is ready for RPDU transfer; and
+
+  3)	after confirmation of the NAS signalling connection establishment, the SMC-5G entity on the originating side forwards the CP-DATA message to the 5GMM sublayer. This contains the RPDU, and also the SMC-5G entity sets the timer TC1* and enters the Wait for CP-ACK state.
+
+In Iu mode, when an SMC-GP entity in the network side is in Idle state and transfer of an RPDU is requested, the SMC-GP entity on the originating side forwards the CP-DATA message to the GMM sublayer. This contains the RPDU, and also the SMC-GP entity sets the timer TC1* and enters the Wait for CP-ACK state.
+
+In S1 mode and the circuit-switched service is used, when an SMC-EP entity in the network side is in Idle state and transfer of an RPDU is requested, the SMC-EP entity on the MSC forwards the CP-DATA message to the SGs sublayer. This contains the RPDU, and also the SMC-EP entity sets the timer TC1* and enters the Wait for CP-ACK state. The SGs layer transfers the CP-DATA message by using the procedures specified in 3GPP 24.301 [10].
+
+In S1 mode and the packet-switched service is used, when an SMC-EP entity in the network side is in Idle state and transfer of an RPDU is requested, the SMC-EP entity on the originating side forwards the CP-DATA message to the EMM sublayer. This contains the RPDU, and also the SMC-GP entity sets the timer TC1* and enters the Wait for CP-ACK state.
+
+In N1 mode and the packet-switched service is used, when an SMC-5G entity in the network side is in Idle state and transfer of an RPDU is requested, the SMC-EP entity on the SMSF forwards the CP-DATA message to the N20 sublayer. This contains the RPDU, and also the SMC-5G entity sets the timer TC1* and enters the Wait for CP-ACK state.
+
+The value of TC1* may vary with the length of the CP-DATA. However, the value of TC1* shall be sufficiently great to allow the lower layers to transmit the CP-DATA and CP-ACK messages and to allow for some re-transmissions of layer 2 frames.
+
+If an SMC entity in the Wait for CP-ACK state gets an indication that the CP-DATA message has probably been lost then, as an implementation option, that SMC-GP entity may reduce the time until expiry of TC1*.
+
+If the timer TC1* expires in the Wait for CP-ACK state, the CP-DATA message is retransmitted and the state Wait for CP-ACK is re-entered. The maximum number of CP-DATA message re-transmissions is an implementation option but shall be either 1, 2 or 3. If the timer TC1* expires after the maximum number of retransmission attempts, an error indication is passed to SM-RL. The Idle state is then entered.
+
+On receipt of the CP-ACK message in response to the CP-DATA (RP DATA) message in the Wait for CP-ACK state, the SMC-GP resets the timer TC1* and enters the Wait for CP DATA state.
+
+On receipt of the CP-ACK message in response to the CP-DATA (RP ACK) message in the Wait for CP-ACK state, the SMC-GP resets the timer TC1* and enters the Idle State.
+
+On receipt of the CP-ACK message in response to the CP-DATA (RP DATA) message in the Wait for CP-ACK state, the SMC-5G resets the timer TC1* and enters the Wait for CP DATA state.
+
+On receipt of the CP-ACK message in response to the CP-DATA (RP ACK) message in the Wait for CP-ACK state, the SMC-5G resets the timer TC1* and enters the Idle State.
+
+In A/Gb mode or S1 mode, when receiving a CP-DATA message form the lower layer, the SMC-GP or SMC-EP entity checks the parameters relevant to the CP protocol. If these are valid, the RPDU is passed to the SM-RL, the CP-ACK message is sent.
+
+In Iu mode, when receiving a CP-DATA message from the GMM sublayer, the SMC-GP entity checks the parameters relevant to the CP protocol. If these are valid, the RPDU is passed to the SM-RL, the CP-ACK message is sent.
+
+In S1 mode, when receiving a CP-DATA message from the lower layer, the SMC-EP entity checks the parameters relevant to the CP protocol. If these are valid, the RPDU is passed to the SM-RL, the CP-ACK message is sent.
+
+In N1 mode, when receiving a CP--DATA message from the lower layer, the SMC-5G entity checks the parameters relevant to the CP protocol. If these are valid, the RPDU is passed to the SM--RL, the CP--ACK message is sent
+
+If an SMC entity in the Idle state is unable to accept a CP-DATA message, it sends a CP-ERROR message and then enters the Idle state.
+
+
+5.3.3	Release of MM and CM connections
+
+With the exception of error situations, release of the MM and CM connection is controlled by the SM-RL.
+
+When an SMC entity in the Wait for CP-ACK state receives a release request from SM-RL, this request is stored until the next state (either MM Connection Established or Idle) is entered. If the Idle state is entered, the request is discarded. If the MM Connection Established state is entered, or if the SMC entity receives a release request from SM-RL in this state, an MM-connection release request is sent to the MM-sublayer and the SMC entity enters the Idle state.
+
+
+5.3.4	Abnormal cases
+
+Abnormal cases that shall be handled by the SMC entity in any state can be classified into five cases:
+
+  -	Upper Layer Abort: errors occurring in the SM-RL may cause the SM-RL to send an MNSMS-ABORT Request to the SMC entity;
+
+  -	CP-Layer Abort: errors occurring within the SMC entity itself may require termination of all activities related to that transaction identifier;
+
+  -	Lower Layer Abort: errors occurring within the layers beneath the CP-layer may cause an MMSM-ERROR Indication or a GMMSMS-ERROR Indication to be sent to the SMC entity;
+
+  -	CP-Layer Protocol Errors: errors occurring within the protocol exchange between the SMC entities may result in the sending of a CP-ERROR message between the entities;
+
+  -	Lower Layer Release: events occurring within the layers beneath the CP layer may cause an MMSM-REL Indication to be sent to the SMC entity.
+
+When the CM-sublayer in the network receives an Upper Layer Abort, it may form and send the CP-ERROR message to release the connection. Irrespective of whether or not the CP-ERROR message was sent, an MM-connection release request, without indication of release cause, is passed to the MM-sublayer. The SMC entity in the network then enters the Idle state.
+
+When the CM-sublayer in the MS receives an Upper Layer Abort and if the MM connection exists, it shall form and send the CP-ERROR message. Irrespective of whether or not the CP-ERROR message was sent, an MM-connection release request, without indication of release cause, is passed to the MM-sublayer. The SMC entity in the mobile station then enters the Idle state.
+
+In the case of a CP-Layer Abort, an error indication is passed to SM-RL. If possible, a CP-ERROR message is sent to the partner SMC entity to indicate the error situation. Then the SMC entity enters the Idle state.
+
+In the case of a Lower Layer Abort, the SMC entity passes an error indication to SM_RL, an MM-connection release request is passed to the MM-sublayer, and the SMC entity immediately enters the Idle state.
+
+In the case of the reception of a CP-ERROR message from the partner SMC entity, an error indication is passed to SM-RL, an MM-connection release request, without indication of release cause, is passed to the MM-sublayer, and the SMC entity enters the Idle state.
+
+In the case of a lower layer release, the SMC entity passes an MNSMS-ERROR Indication to SM-RL and then enters the Idle state.
+
+In all cases, if the timer TC1* is running, it is reset.
+
+It is possible that the CP-ACK of a short message transfer might not be received (e.g. due to hand over). If the first CP-ACK (acknowledging the CP-DATA that carried the first RPDU) is not received the reception of CP-DATA may be interpreted as the reception of the awaited CP-ACK and CP-DATA message.
+
+
+5.4	Concatenating short message or notification transfers
+
+If an entity has more than one short message or notification to send, then it is useful to maintain the Radio Resource (RR) connection (in A/Gb mode) or the signalling connection (in Iu mode and in S1 mode if packet-switched service is used, and in N1 mode) in between transfers. For mobile terminated short messages this is simple because the network decides when, and whether, to release the RR connection (in A/Gb mode) or the signalling connection (in Iu mode and in S1 mode if packet-switched service is used, and in N1 mode). However, for mobile originated transfers, the network does not know whether or not the mobile has more messages to transfer. For short message transfer through the EPS in S1 mode if circuit-switched service is used, the network side has no knowledge of the signalling connection in for both mobile originated and mobile terminated transfers.
+
+If another short message or a memory available notification is to be sent, an originating SMR entity in the MS may choose to continue to use the same RR connection (in A/Gb mode) or the same signalling connection (in Iu mode or in N1 mode).
+
+In the case of a SMS transfer via the CS domain, when the MS chooses to use the same RR connection (in A/Gb mode) or CS signalling connection (in Iu mode), then:
+
+  -	the MS shall transmit a CM SERVICE REQUEST for the new CM connection before the final CP-ACK (i.e. the one that acknowledges the CP-DATA that carried the RP-ACK) for the old MM connection is transmitted;
+
+  -	before transmission of the first CP-DATA on the new MM connection, the MS may transmit the CP-ACK for the old MM connection; the MS shall not transmit the final CP-ACK after the new CP-DATA;
+
+  -	the Transaction Identifier used on the new MM connection shall be different to that used on the old MM connection; and
+
+  -	the MS shall not initiate establishment of the new MM connection before the final CP-DATA (e.g. the one carrying the RP-ACK) has been received.
+
+In the case of a SMS transfer via the PS domain, when the MS chooses to use the same PS signalling connection (in Iu mode and in S1 mode if packet-switched service is used); or in the case of a SMS transfer via the PS domain in A/Gb mode; or in the case of SMS transfer through the EPS, or in the case of SMS transfer in N1 mode, then:
+
+  -	the MS shall transmit the CP-DATA for the successive RPDU and shall not transmit the final CP-ACK for the current SMS (i.e. the one that acknowledges the CP-DATA that carried the RP-ACK);
+
+  -	the Transaction Identifier used for the successive RPDU shall be different to that used for the current RPDU; and
+
+  -	the MS shall not transmit the CP-DATA for the successive RPDU before the final CP-DATA (i.e. the one that carried the RP-ACK) has been received.
+
+  NOTE:	When an MS sends successive memory available notifications and/or mobile originated short messages on different RR connections (in A/Gb mode) or signalling connections (in Iu mode and S1 mode), the MS is strongly recommended to use different Transaction Identifiers for the old and new MM connections.
+
+It is possible that the final CP-ACK of a short message transfer may not be received (e.g. due to transmission errors and/or hand overs).
+
+For mobile terminated transfers, if the CP-ACK is lost, the reception of a CP-DATA with a different transaction identifier and carrying an RPDU shall be interpreted as the implicit reception of the awaited CP-ACK followed by the reception of the new CP-DATA message.
+
+For mobile originated transfers, if the CP-ACK is lost or not sent by the MS, the following events shall be interpreted as the implicit reception of the awaited CP-ACK:
+
+  -	in the case of a SMS transfer via the CS domain,, the reception of a CM SERVICE REQUEST followed by a CP-DATA with a different transaction identifier and carrying an RPDU; or
+
+  -	in the case of a SMS transfer via the PS domain, the reception of a CP-DATA with a different transaction identifier and carrying an RPDU.
+
+
+6	SM-RL-procedures
+
+
+6.1	General
+
+This clause describes the procedures used by the SMR entity for short message and notification support on the Short Message Relay Layer. An SMR entity communicates with a corresponding peer entity using a CM-connection.
+
+Multiple CM-connections may be established at the same time, allowing parallel transactions. There is a functional one to one relation between the SMR entity and the SMC entity of the CM-sublayer. The descriptions of the procedures are related to one single transaction.
+
+The RL-procedures described in this subclause can only be performed if a CM-connection has been established between the mobile station and the network. Detailed SDL-diagrams for short message control on SM-RL are contained in annex D.
+
+
+6.2	Transition states of SMR entity
+
+The state transition diagram for the SMR entities on both MS-side and network side are contained in annex D.
+
+
+6.2.1	SMR-states at the MS-side of the radio interface
+
+The states described in this subclause are for a SMR entity in a MS, handling mobile originating- and mobile terminating short messages and notification transfer.
+
+
+6.2.1.1	Idle (State 0)
+
+This state exists when the SMR entity is in idle mode, or when a short message or notification transfer ends in a normal or abnormal way.
+
+
+6.2.1.2	Wait for RP-ACK (State 1)
+
+This state exists for mobile originating short message or notification transfer when the SMR has passed the RP-DATA or RP-SMMA to the SMC entity and set the timer TR1M.
+
+
+6.2.1.2a	Wait to send RP-ACK (State 3)
+
+This state exists for mobile terminating short message transfer. The SMR entity will enter this state after passing a received RP-DATA message to TL and setting the timer TR2M.
+
+
+6.2.1.3	Wait for RETRANS TIMER (State 4)
+
+This state exists for memory available notification when the SMR is waiting to retransmit the RP-SMMA message. Timer TRAM has been set. The possibility of an abort of the sending of the memory available notification by the SM-TL exists. No underlying connection exists.
+
+
+6.2.2	SMR-states at the network side of the radio interface
+
+The states described in this subclause are for a SMR entity in a MSC, handling mobile originating- and mobile terminating short message and notification transfer.
+
+
+6.2.2.1	Idle (State 0)
+
+This state exists when the SMR entity is in idle mode, or when a short message transfer or notification end in a normal or abnormal way.
+
+
+6.2.2.2	Wait for RP-ACK (State 1)
+
+This state exists for a mobile terminating short message transfer when the SMR has passed the RP-DATA message to the SMC entity and set the timer TR1N.
+
+
+6.2.2.3	Wait to send RP-ACK (State 3)
+
+This state exists for mobile originating short message or notification transfer. The SMR entity will enter this state after passing a received RP-DATA or RP-SMMA message to TL and setting the timer TR2N.
+
+
+6.3	Short Message Relay procedures
+
+The procedures needed for short message and notification relaying are:
+
+  -	TP Data Unit (TPDU) relay procedures;
+
+  -	notification relay procedures;
+
+  -	procedures for abnormal cases.
+
+
+6.3.1	TPDU relaying
+
+When the SMR entity is in the Idle state and receives a request from SM-TL to relay a TPDU, it forms and transfers the RP-DATA message (containing the TPDU), sets the timer TR1* and enters the state Wait for RP-ACK.
+
+Retransmission of RP data units by the CM-sublayer is described in clause 5.
+
+When the SMR entity is in the "Wait for RP-ACK" state, the following situations may occur:
+
+  a)	reception of an RP-ACK or RP-ERROR message (containing the same reference number as the transmitted RP-DATA message);
+
+  b)	reception of an error indication from the CM-sublayer;
+
+  c)	the timer TR1* expires.
+
+In case a) or b), the timer TR1* is reset, a report indication is passed to SM-TL, a request to release the CM-connection is passed to CM-sublayer, and the SMR entity enters the Idle state.
+
+In case a) when the SMR entity in the MS receives an RP-ERROR message, the MS shall then take one of the following actions depending upon the received RP-ERROR cause:
+
+  #69	"Requested facility not implemented"
+
+    	If this RP-ERROR cause was received in reaction to an SMS transfer via GPRS, the MS shall proceed as specified in the subclause 2.6.
+
+In case c), a request to abort the CM-connection is passed to the CM-sublayer, a report indication is passed to SM-TL, and the SMR entity enters the Idle state.
+
+When the SMR entity is in the Idle state and receives an MNSMS-EST-Ind containing a valid RP-DATA message, it passes the SMS-TPDU to the SM-TL, starts timer TR2*, and enters the state "Wait to Send RP-ACK".
+
+When the SMR entity in the SGSN is in the Idle state and receives an MNSMS-EST-Ind containing a valid RP-DATA message, but the delivery of SMS via GPRS is not activated, the network shall return an RP-ERROR message with cause #69 "Requested facility not implemented" and remain in the Idle state.
+
+When the SMR entity is in the state "Wait to Send RP-ACK" and the SMR entity receives the SM-RL-Report-Request, the timer TR2* is reset, the RP-message (RP-ACK or RP-ERROR) is generated and relayed to the peer entity, a CM-connection release request is passed to the CM-sublayer, and the SMR entity enters the Idle state.
+
+When the SMR entity is in the state "Wait to Send RP-ACK" and the SMR entity receives an error indication from the CM-sublayer, the timer TR2* is reset, a report indication is passed to the SM-TL and the SMR entity enters the Idle state.
+
+When the SMR entity is in the state "Wait to send RP-ACK" and the timer TR2* expires, the SMR entity passes a CM-connection abort request to the CM-sublayer, a report indication is passed to the SM-TL, and the SMR entity enters the Idle state.
+
+
+6.3.2	[Void]
+
+
+6.3.3	Notification relaying
+
+
+6.3.3.1	MS side
+
+
+6.3.3.1.1	Idle state
+
+When the SMR entity in the MS in the Idle state receives a request from the SM-TL to relay a notification to the network, it forms and transfers the RP-SMMA message, starts timer TR1M, and enters the state Wait for RP-ACK.
+
+
+6.3.3.1.2	Wait for RP-ACK state
+
+When the SMR entity in the MS is in the Wait for RP-ACK state and it receives either:
+
+  -	an RP-ACK (containing the same reference number as the last transmitted RP-SMMA message); or
+
+  -	an RP-ERROR (containing the same reference number as the last transmitted RP-SMMA message) with a permanent failure indication; or
+
+  -	an error indication from the CP-sublayer;
+
+then the MS shall reset timer TR1M, pass a report indication to SM-TL, give a CM-connection release request to the CM-sublayer, and enter the Idle state. If set, timer TRAM and the RETRANS flag are also reset.
+
+If the SMR entity in the MS is in the Wait for RP-ACK state and receives an RP-ERROR message, the MS shall then take one of the following actions depending upon the received RP-ERROR cause:
+
+  #69	"Requested facility not implemented"
+
+    If this RP-ERROR cause was received in reaction to an SMS transfer via GPRS, the MS shall proceed as specified in the subclause 2.6.
+
+When the SMR entity in the MS is in the Wait for RP-ACK state and either:
+
+  -	it receives an RP-ERROR (containing the same reference number as the last transmitted RP-SMMA message) with a temporary failure indication; or
+
+  -	timer TR1M expires;
+
+  then the MS shall examine the RETRANS flag:
+
+  -	if the RETRANS flag is set (i.e. no more transmissions of the RP-SMMA message are permitted) then:
+
+    -	the MS shall pass a report indication to SM-TL, give a CM-connection release request to the CM-sublayer, reset the RETRANS flag, reset TR1M, and enter the Idle state.
+
+  -	If the RETRANS flag is not set (i.e. at least another transmission of the RP-SMMA message is currently permitted) then:
+
+    -	the MS shall give a CM-connection release request to the CM-sublayer, set the RETRANS flag, reset TR1M, start timer TRAM and enter the Wait for Retrans Timer state.
+
+When the SMR entity in the MS is in the Wait for RP-ACK state and it receives an SM-RL-MEMORY-AVAILABLE-Req (SMS-MEM-NOTIF-ABORT) primitive, then the MS shall set the RETRANS flag and reenter the Wait for RP-ACK state.
+
+
+6.3.3.1.3	Wait for RETRANS Timer state
+
+When the SMR entity in the MS is in the Wait for Retrans Timer state and timer TRAM expires then, the MS shall form and transfer an RP-SMMA message, start timer TR1M, and enter the state Wait for RP-ACK. The RP-Message Reference in this RP-SMMA message shall be different from that in the previous RP-SMMA message.
+
+When the SMR entity in the MS is in the Wait for Retrans Timer state and it receives an SM-RL-MEMORY-AVAILABLE-Req (SMS-MEM-NOTIF-ABORT) primitive, then the MS shall reset the RETRANS flag, reset timer TRAM, pass a report indication to SM-TL, and enter the Idle state.
+
+
+6.3.3.2	Network side
+
+
+6.3.3.2.1	Idle state
+
+When the SMR entity in the network is in the Idle state and receives an MNSMS-EST-Ind containing a valid RP-SMMA message, it passes the SMS-TPDU to the SM-TL, starts timer TR2N, and enters the state "Wait to send RP-ACK".
+
+When the SMR entity in the SGSN is in the Idle state and receives an MNSMS-EST-Ind containing a valid RP-SMMA  message, but the delivery of SMS via GPRS is not activated, the network shall return an RP-ERROR message with cause #69 "Requested facility not implemented" and remain in the Idle state.
+
+
+6.3.3.2.2	Wait to Send RP-ACK state
+
+When the SMR entity in the network is in the state "Wait to Send RP-ACK" and the SMR entity receives the SM-RL-Report-Request, timer TR2N is reset, the RP-message (RP-ACK or RP-ERROR) is generated and relayed to the MS, a CM-connection release request is passed to the CM-sublayer, and the SMR entity enters the Idle state.
+
+When the SMR entity in the network is in the state "Wait to Send RP-ACK" and the SMR entity receives an error indication from the CM-sublayer, timer TR2N is reset, a report indication is passed to the SM-TL and the SMR entity enters the Idle state.
+
+When the SMR entity in the network is in the state "Wait to Send RP-ACK" and the timer TR2N expires, the SMR entity passes a CM-connection abort request to the CM-sublayer, a report indication is passed to the SM-TL, and the SMR entity enters the Idle state.
+
+
+6.3.4	Abnormal cases
+
+Format errors etc.:
+
+    	If the SMR entity upon receipt of an RP-DATA or RP-SMMA message detects an erroneous condition which it can act on, (e.g. format errors, invalid parameters etc.) it shall return an RP-ERROR message with an appropriate cause value and possibly extended diagnostic information, release or abort the CM-connection, and enter the Idle state.
+
+
+7	Message functional definitions and content
+
+
+7.1	General
+
+The notation used is as used in 3GPP TS 24.008 [5]/clause 9, and each definition includes:
+
+  a)	A brief description of the message direction and use.
+
+  b)	A table listing the information elements in the order of their appearance in the message. For each information element the table indicates:
+
+    1)	A reference to the (sub)clause/Technical Specification describing the information element.
+
+    2)	The presence requirement indication (M, C, or O) for the IE as defined in 3GPP TS 24.007 [4].
+
+    3)	The format of the information element (T, V, TV, LV, TLV) as defined in 3GPP TS 24.007 [4].
+
+    4)	The length of the information element (or permissible range of lengths), in octets, in the messages.
+
+
+7.2	Messages for short message or notification transfer on CM
+
+This subclause describes the functional definition and content of the messages sent between two SMC entities.
+
+There are three messages defined: CP-DATA, CP-ACK and CP-ERROR.
+
+
+7.2.1	CP-DATA
+
+The CP-DATA message is sent between an MSC and an MS, in both directions. The message contains the user data to be relayed between the CM-users, and associated parameters. See table 7.1/ 3GPP TS 24.011.
+
+Table 7.1/3GPP TS 24.011: CP-DATA message content
+
+|       |Information element                      |Reference                        |Presence          |Format        |Length                  |
+|       |Protocol discriminator                   |3GPP TS 24.007                   |M                 |V             |1/2 octet               |
+|       |Transaction identifier                   |3GPP TS 24.007                   |M                 |V             |1/2 octet               |
+|       |Message type                             |Subclause 8.1.3                  |M                 |V             |1 octet                 |
+|       |CP-User data                             |Subclause 8.1.4.1                |M                 |LV            |( 249 octets            |
+
+
+
+7.2.2	CP-ACK
+
+The CP-ACK message is sent between an MSC and an MS, in both directions, and is used to acknowledge the reception of a CP-DATA message. See table 7.2/3GPP TS 24.011.
+
+Table 7.2/3GPP TS 24.011: CP-ACK message content
+
+|       |Information element                    |Reference              |Presence               |Format                 |Length                 |
+|       |Protocol discriminator                 |3GPP TS 24.007         |M                      |V                      |1/2 octet              |
+|       |Transaction identifier                 |3GPP TS 24.007         |M                      |V                      |1/2 octet              |
+|       |Message type                           |Subclause 8.1.3        |M                      |V                      |1 octet                |
+
+
+
+7.2.3	CP-ERROR
+
+The CP-ERROR message is sent between an MSC and an MS, in both directions, and used to convey error information. See table 7.3/3GPP TS 24.011.
+
+Table 7.3/3GPP TS 24.011: CP-ERROR message content
+
+|       |Information element                    |Reference                |Presence              |Format                |Length                |
+|       |Protocol discriminator                 |3GPP TS 24.007           |M                     |V                     |1/2 octet             |
+|       |Transaction identifier                 |3GPP TS 24.007           |M                     |V                     |1/2 octet             |
+|       |Message type                           |Subclause 8.1.3          |M                     |V                     |1 octet               |
+|       |CP-Cause                               |Subclause 8.1.4.2        |M                     |V                     |1 octet               |
+
+
+
+7.3	Messages for short message and notification transfer on SM-RL
+
+This subclause describes the functional definition and content of the messages sent between two SMR entities.
+
+There are 4 messages defined: RP-DATA, RP-SMMA, RP-ACK and RP-ERROR.
+
+
+7.3.1	RP-DATA
+
+A phase 2 entity shall not reject a RP-DATA message where both address elements have a length greater than 0.
+
+
+7.3.1.1	RP-DATA (Network to Mobile Station)
+
+This message is sent in MSC -> MS direction. The message is used to relay the TPDUs. The information elements are in line with 3GPP TS 23.040. See table 7.4/3GPP TS 24.011.
+
+Table 7.4/3GPP TS 24.011: RP-DATA message content
+
+|           |Information element               |Reference                |Presence             |Format                 |Length                 |
+|           |RP-Message Type                   |Subclause 8.2.2          |M                    |V                      |3 bits                 |
+|           |RP-Message Reference              |Subclause 8.2.3          |M                    |V                      |1 octet                |
+|           |RP-Originator Address             |Subclause 8.2.5.1        |M                    |LV                     |1-12 octets            |
+|           |RP-Destination Address            |Subclause 8.2.5.2        |M                    |LV                     |1 octet                |
+|           |RP-User Data                      |Subclause 8.2.5.3        |M                    |LV                     |( 233 octets           |
+
+
+
+7.3.1.2	RP-DATA (Mobile Station to Network)
+
+This message is sent in MS -> MSC direction. The message is used to relay the TPDUs. The information elements are in line with 3GPP TS 23.040. See table 7.5/3GPP TS 24.011.
+
+Table 7.5/3GPP TS 24.011: RP-DATA message content
+
+|           |Information element               |Reference                |Presence             |Format                 |Length                 |
+|           |RP-Message Type                   |Subclause 8.2.2          |M                    |V                      |3 bits                 |
+|           |RP-Message Reference              |Subclause 8.2.3          |M                    |V                      |1 octet                |
+|           |RP-Originator Address             |Subclause 8.2.5.1        |M                    |LV                     |1 octet                |
+|           |RP-Destination Address            |Subclause 8.2.5.2        |M                    |LV                     |1-12 octets            |
+|           |RP-User Data                      |Subclause 8.2.5.3        |M                    |LV                     |( 233 octets           |
+
+
+
+7.3.2	RP-SMMA
+
+This message is sent by the mobile station to relay a notification to the network that the mobile has memory available to receive one or more short messages. The information elements are in line with 3GPP TS 23.040. See table 7.6/3GPP TS 24.011.
+
+Table 7.6/3GPP TS 24.011: RP-SMMA message content
+
+|           |Information element               |Reference              |Presence               |Format                 |Length                 |
+|           |RP-Message Type                   |Subclause 8.2.2        |M                      |V                      |3 bits                 |
+|           |RP-Message Reference              |Subclause 8.2.3        |M                      |V                      |1 octet                |
+
+
+
+7.3.3	RP-ACK
+
+This message is sent between the MSC and the mobile station in both directions and used to relay the acknowledgement of a RP-DATA or RP-SMMA message reception. The information elements are in line with 3GPP TS 23.040. See table 7.7/3GPP TS 24.011.
+
+Table 7.7/3GPP TS 24.011: RP-ACK message content
+
+|IEI        |Information element               |Reference                |Presence             |Format                 |Length                 |
+|           |RP-Message Type                   |Subclause 8.2.2          |M                    |V                      |3 bits                 |
+|           |RP-Message Reference              |Subclause 8.2.3          |M                    |V                      |1 octet                |
+|41         |RP-User Data                      |Subclause 8.2.5.3        |O                    |TLV                    |( 234 octets           |
+
+
+
+7.3.4	RP-ERROR
+
+This message is sent between the MSC and the mobile station in both directions and used to relay an error cause from an erroneous short message or notification transfer attempt. The information elements are in line with 3GPP TS 23.040. See table 7.8/3GPP TS 24.011.
+
+The contents of the cause field are given in subclause 8.2.5.4.
+
+Table 7.8/3GPP TS 24.011: RP-ERROR message content
+
+|IEI        |Information element               |Reference                |Presence             |Format                 |Length                 |
+|           |RP-Message Type                   |Subclause 8.2.2          |M                    |V                      |3 bits                 |
+|           |RP-Message Reference              |Subclause 8.2.3          |M                    |V                      |1 octet                |
+|           |RP-Cause                          |Subclause 8.2.5.4        |M                    |LV                     |2-3 octets             |
+|41         |RP-User Data                      |Subclause 8.2.5.3        |O                    |TLV                    |( 234 octets           |
+
+
+
+8	Message format and information elements coding
+
+
+8.1	CP-messages
+
+
+8.1.1	General
+
+The message format and information elements coding is in line with 3GPP TS 24.007 [4] and 3GPP TS 24.008 [5].
+
+The message shall consist of the following parts:
+
+  a)	protocol discriminator;
+
+  b)	transaction identifier;
+
+  c)	message type;
+
+  d)	other required information elements.
+
+This organization is illustrated in the example shown in figure 8.1/3GPP TS 24.011.
+
+
+
+|8 7 6 5                            |4 3 2 1                            |
+|Transaction Id.                    |Protocol Discr.                    |
+|Message Type                                                           |
+|Other Information Elements                                             |
+
+Figure 8.1/3GPP TS 24.011
+
+
+8.1.2	Protocol Discriminator and Transaction Identifier
+
+The Protocol Discriminator and Transaction Identifier is described in 3GPP TS 24.007 [4].
+
+
+8.1.3	Message type
+
+The purpose of the message type, together with the protocol discriminator, is to identify the function of the message being sent. The coding of message types is shown in table 8.1/3GPP TS 24.011.
+
+Table 8.1/3GPP TS 24.011: Message types for short message and notification transfer on CM
+
+| 8 7 6 5 4 3 2 1                                                       |
+|0 0 0 0 0 0 0 1 CP-DATA                                                |
+|0 0 0 0 0 1 0 0 CP-ACK                                                 |
+|0 0 0 1 0 0 0 0 CP-ERROR                                               |
+
+
+
+8.1.4	Other required information elements
+
+
+8.1.4.1	CP-User data element
+
+The CP-User data element is used to carry the RPDU. It has an information element identifier, a length indicator and a data field. The data field will contain the RPDUs. The maximum length of the data field is 248 octets. The layout is indicated in figure 8.2/3GPP TS 24.011.
+
+
+
+|8  7 6 5 4 3 2 1                                                         |                    |
+|          | 0 0 0 0 0 0 1                                                |                    |
+|0         |CP-User Data IEI                                              |1 octet             |
+|Length indicator                                                         | 1 octet            |
+|RPDU                                                                     |                    |
+|Maximum length 248 octets                                                |? octet             |
+
+Figure 8.2/3GPP TS 24.011: CP-User data element layout
+
+
+8.1.4.2	CP-Cause element
+
+This element is included in the CP-ERROR message, the layout is given in figure 8.3/3GPP TS 24.011. The error causes are listed in table 8.2/3GPP TS 24.011.
+
+
+
+|8 7 6 5                            | 4 3 2 1                             |                    |
+|          |0 0 0 0 0 1 0                                                 |                    |
+|0         |CP-Cause IEI                                                  |1 octet             |
+|0         |Cause value                                                   | 1 octet            |
+
+Figure 8.3/3GPP TS 24.011: CP-Cause element layout
+
+Table 8.2/3GPP TS 24.011: Content and coding of CP-Cause
+
+|Cause value           |Cause nr.         |Cause                                                                        |
+|                      |                  |                                                                             |
+|7 6 5 4 3 2 1         |#                 |                                                                             |
+|0 0 1 0 0 0 1         |17                |Network failure                                                              |
+|0 0 1 0 1 1 0         |22                |Congestion                                                                   |
+|1 0 1 0 0 0 1         |81                |Invalid Transaction Identifier value                                         |
+|1 0 1 1 1 1 1         |95                |Semantically incorrect message                                               |
+|1 1 0 0 0 0 0         |96                |Invalid mandatory information                                                |
+|1 1 0 0 0 0 1         |97                |Message type non-existent or not implemented                                 |
+|1 1 0 0 0 1 0         |98                |Message not compatible with the short message protocol state                 |
+|1 1 0 0 0 1 1         |99                |Information element non-existent or not implemented                          |
+|1 1 0 1 1 1 1         |111               |Protocol error, unspecified                                                  |
+|                      |                  |                                                                             |
+|All other cause values shall be treated as cause number 111.                                                           |
+
+
+
+8.2	RP-messages
+
+
+8.2.1	General
+
+The message shall consist of the following parts:
+
+  a)	message type indicator;
+
+  b)	message reference;
+
+  c)	other required information elements.
+
+This organization is illustrated in the example shown in figure 8.4/3GPP TS 24.011:
+
+
+
+|8 7 6 5                            |4 3 2 1                            |
+|spare                                        |MTI                     |
+|0 0 0 0 0                                    |                        |
+|Message reference                                                      |
+|Other Information Elements                                             |
+
+Figure 8.4/3GPP TS 24.011
+
+
+8.2.2	Message type indicator (MTI)
+
+The message type indicator, MTI, is a 3-bit field, located in the first octet of all RP-messages. The coding of the MTI is defined by table 8.3/3GPP TS 24.011.
+
+Table 8.3/3GPP TS 24.011: Coding of Message Type Indicator
+
+|Bit value                 |Direction               |RP-Message                     |
+| 3 2 1                    |                        |                               |
+| 0 0 0                    | ms -> n                | RP-DATA                       |
+| 0 0 0                    |n -> ms                 | Reserved                      |
+| 0 0 1                    | ms -> n                | Reserved                      |
+| 0 0 1                    |n -> ms                 | RP-DATA                       |
+| 0 1 0                    | ms -> n                | RP-ACK                        |
+| 0 1 0                    |n -> ms                 | Reserved                      |
+| 0 1 1                    | ms -> n                | Reserved                      |
+| 0 1 1                    |n -> ms                 | RP-ACK                        |
+| 1 0 0                    | ms -> n                | RP-ERROR                      |
+| 1 0 0                    |n -> ms                 | Reserved                      |
+| 1 0 1                    | ms -> n                | Reserved                      |
+| 1 0 1                    |n -> ms                 | RP-ERROR                      |
+| 1 1 0                    | ms -> n                | RP-SMMA                       |
+| 1 1 0                    |n -> ms                 | Reserved                      |
+| 1 1 1                    | ms -> n                | Reserved                      |
+| 1 1 1                    |n -> ms                 | Reserved                      |
+
+
+
+8.2.3	Message reference
+
+The message reference field contains a sequence number in the range 0 through 255, and is used to link an RP-ACK message or RP-ERROR message to the associated (preceding) RP-DATA or RP-SMMA message transfer attempt.
+
+
+8.2.4	[Void]
+
+
+8.2.5	Other required information elements
+
+
+8.2.5.1	Originator address element
+
+In the case of MT transfer this element contains the originating Service Centre address.
+
+The RP-Originator Address information element is coded as shown in figure 8.5/3GPP TS 24.011.
+
+The RP-Originator Address is a type 4 information element. In the network to mobile station direction the minimum value of the length octet is 2 and the maximum value is 11. In the mobile station to network direction the value of the length octet of the element is set to 0.
+
+
+
+| 8 7 6 5 4 3 2 1                                                                                       |
+|                |RP-Originator Address IEI                                          |octet 1          |
+|Length of RP-Originator Address contents                                            |octet 2          |
+|1 ext           |type of number               |Numbering plan identification         |octet 3          |
+|Number digit 2                               |Number digit 1                        |octet 4          |
+|Number digit 4                               |Number digit 3                        |octet 5          |
+|                                             |                                      |:                |
+|                                             |                                      |:                |
+|                                             |                                      |
+
+Figure 8.5/3GPP TS 24.011: RP-Originator Address information element
+
+If the RP-Originator Address contains an odd number of digits, bits 5 to 8 of the last octet shall be filled with an end mark coded as "1111".
+
+The contents of octets 3, 4, etc. are the same as those defined for the Called Party BCD Number IE defined in 3GPP TS 24.008 [5].
+
+
+8.2.5.2	Destination address element
+
+In the case of MO transfer, this element contains the destination Service Centre address.
+
+The RP-Destination Address information element is coded as shown in figure 8.6/3GPP TS 24.011.
+
+The RP-Destination Address is a type 4 information element. In the mobile station to network direction the minimum value of the length octet is 2 and the maximum value is 11. In the network to mobile station direction, the value of the length octet of the element is set to 0.
+
+
+
+| 8 7 6 5 4 3 2 1                                                                                       |
+|                |RP-Destination Address number IEI                                  |octet 1          |
+|Length of RP-Destination Address contents                                           |octet 2          |
+|1 ext           |type of number               |Numbering plan identification         |octet 3          |
+|Number digit 2                               |Number digit 1                        |octet 4          |
+|Number digit 4                               |Number digit 3                        |octet 5          |
+|                                             |                                      |:                |
+|                                             |                                      |:                |
+|                                             |                                      |
+
+Figure 8.6/3GPP TS 24.011: RP-Destination Address information element
+
+The number digit(s) in octet 4 precede the digit(s) in octet 5 etc. The number digit which would be entered first is located in octet 4, bits 1 to 4.
+
+If the RP-Destination Address contains an odd number of digits, bits 5 to 8 of the last octet shall be filled with an end mark coded as "1111".
+
+Since the information element contains the complete RP-Destination Address there is no need for an additional complete indication.
+
+The contents of octets 3, 4, etc. are the same as those defined for the Called Party BCD Number IE defined in 3GPP TS 24.008 [5].
+
+
+8.2.5.3	RP-User data element
+
+The RP-User data field contains the TPDU and is mandatory in a RP-DATA message. RP-User data is also optionally carried in an RP-Error message. In a RP DATA message, the element has a variable length, up to 233 octets, and in a RP ERROR and in a RP ACK message the length is up to 234 octets .
+
+RP-User data in an RP-Error message is conveyed as diagnostic information within the "SM-DeliveryFailureCause" response to a MAP Forward-Short-Message procedure (see 3GPP TS 29.002). The diagnostic information may be sent in both directions, and shall always be forwarded by the MSC if it is received.
+
+
+
+| 8 7 6 5 4 3 2 1                                                                                       |
+|                | 1 0 0 0 0 0 1                                                     |                 |
+|0               |RP-User Data IEI                                                   |1 octet          |
+|Length indicator                                                                    |1 octet          |
+|TPDU                                                                                |                 |
+|Maximum length 232 octets                                                           |                 |
+
+Figure 8.7/3GPP TS 24.011: RP-User data element layout
+
+
+8.2.5.4	RP-Cause element
+
+This element is a variable length element always included in the RP-ERROR message, conveying a negative result of a RP-DATA message transfer attempt or RP-SMMA notification attempt. The element contains a cause value and optionally a diagnostic field giving further details of the error cause.
+
+The coding of the cause value is given in table 8.4/3GPP TS 24.011. The mapping between error causes in 3GPP TS 24.011 and 3GPP TS 29.002 (MAP) is specified in 3GPP TS 23.040. Parameters included in the return error from MAP (e.g. System Failure) are mapped directly into the diagnostic field.
+
+
+
+| 8 7 6 5 4 3 2 1                                                                                       |
+|                | 1 0 0 0 0 1 0                                                     |                 |
+|0               |RP-Cause IEI                                                       |1 octet          |
+|Length indicator                                                                    |1 octet          |
+|0 ext           |Cause value                                                        |1 octet          |
+|                |Cause value                                                        |                 |
+|Diagnostic field                                                                    |1 octet  *       |
+
+Figure 8.8/3GPP TS 24.011: RP-Cause element layout
+
+Table 8.4/3GPP TS 24.011 (part 1): Cause values that may be contained in an RP-ERROR message
+in a mobile originating SM-transfer attempt
+
+|Cause value               |Cause           |Cause                                                                |
+|Class value               |number          |                                                                     |
+|                          |                |                                                                     |
+|7 6 5 4 3 2 1             | #              |                                                                     |
+|0 0 0 0 0 0 1             | 1              |Unassigned (unallocated) number                                      |
+|0 0 0 1 0 0 0             | 8              |Operator determined barring                                          |
+|0 0 0 1 0 1 0             |10              |Call barred                                                          |
+|0 0 0 1 0 1 1             |11              |Reserved                                                             |
+|0 0 1 0 1 0 1             |21              |Short message transfer rejected                                      |
+|0 0 1 1 0 1 1             |27              |Destination out of order                                             |
+|0 0 1 1 1 0 0             |28              |Unidentified subscriber                                              |
+|0 0 1 1 1 0 1             |29              |Facility rejected                                                    |
+|0 0 1 1 1 1 0             |30              |Unknown subscriber                                                   |
+|0 1 0 0 1 1 0             |38              |Network out of order                                                 |
+|0 1 0 1 0 0 1             |41              |Temporary failure                                                    |
+|0 1 0 1 0 1 0             |42              |Congestion                                                           |
+|0 1 0 1 1 1 1             |47              |Resources unavailable, unspecified                                   |
+|0 1 1 0 0 1 0             |50              |Requested facility not subscribed                                    |
+|1 0 0 0 1 0 1             |69              |Requested facility not implemented                                   |
+|1 0 1 0 0 0 1             |81              |Invalid short message transfer reference value                       |
+|1 0 1 1 1 1 1             |95              |Semantically incorrect message                                       |
+|1 1 0 0 0 0 0             |96              |Invalid mandatory information                                        |
+|1 1 0 0 0 0 1             |97              |Message type non-existent or not implemented                         |
+|1 1 0 0 0 1 0             |98              |Message not compatible with short message protocol state             |
+|1 1 0 0 0 1 1             |99              |Information element non-existent or not implemented                  |
+|1 1 0 1 1 1 1             |111             |Protocol error, unspecified                                          |
+|1 1 1 1 1 1 1             |127             |Interworking, unspecified                                            |
+|                          |                |                                                                     |
+|All other cause values shall be treated as cause number 41, "Temporary Failure".                                 |
+
+
+Table 8.4/3GPP TS 24.011 (part 2): Cause values that may be contained in an RP-ERROR message in a mobile terminating SM-transfer attempt
+
+|Cause value               |Cause         |Cause                                                                 |
+|Class value               |number        |                                                                      |
+|                          |              |                                                                      |
+|7 6 5 4 3 2 1             | #            |                                                                      |
+|0 0 1 0 1 1 0             |22            |Memory capacity exceeded                                              |
+|1 0 1 0 0 0 1             |81            |Invalid short message transfer reference value                        |
+|1 0 1 1 1 1 1             |95            |Semantically incorrect message                                        |
+|1 1 0 0 0 0 0             |96            |Invalid mandatory information                                         |
+|1 1 0 0 0 0 1             |97            |Message type non-existent or not implemented                          |
+|1 1 0 0 0 1 0             |98            |Message not compatible with short message protocol state              |
+|1 1 0 0 0 1 1             |99            |Information element non-existent or not implemented                   |
+|1 1 0 1 1 1 1             |111           |Protocol error, unspecified                                           |
+|                          |              |                                                                      |
+|All other cause values shall be treated as cause number 111, "Protocol error, unspecified".                     |
+
+
+Table 8.4/3GPP TS 24.011 (part 3): Cause values that may be contained in an RP-ERROR message in a memory available notification attempt
+
+|Cause value               |Cause           |Cause           |Cause                                                                    |
+|Class value               |number          |type            |                                                                         |
+|                          |                |                |                                                                         |
+|7 6 5 4 3 2 1             | #              |                |                                                                         |
+|0 0 1 1 1 1 0             |30              |P               |Unknown Subscriber                                                       |
+|0 1 0 0 1 1 0             |38              |T               |Network out of order                                                     |
+|0 1 0 1 0 0 1             |41              |T               |Temporary failure                                                        |
+|0 1 0 1 0 1 0             |42              |T               |Congestion                                                               |
+|0 1 0 1 1 1 1             |47              |T               |Resources unavailable, unspecified                                       |
+|1 0 0 0 1 0 1             |69              |P               |Requested facility not implemented                                       |
+|1 0 1 1 1 1 1             |95              |P               |Semantically incorrect message                                           |
+|1 1 0 0 0 0 0             |96              |P               |Invalid mandatory information                                            |
+|1 1 0 0 0 0 1             |97              |P               |Message type non-existent or not implemented                             |
+|1 1 0 0 0 1 0             |98              |P               |Message not compatible with short message protocol state                 |
+|1 1 0 0 0 1 1             |99              |P               |Information element non-existent or not implemented                      |
+|1 1 0 1 1 1 1             |111             |P               |Protocol error, unspecified                                              |
+|1 1 1 1 1 1 1             |127             |P               |Interworking, unspecified                                                |
+|                          |                |                |                                                                         |
+|All other cause values are treated as cause number 41, "Temporary failure".                                                           |
+|                          |                |                |                                                                         |
+|Each cause is classified as "Temporary" or "Permanent", as indicated by T and P respectively in the cause type column.                |
+
+
+
+9	Handling of unknown, unforeseen, and erroneous protocol data
+
+
+9.1	General
+
+This subclause specifies procedures for handling of unknown, unforeseen, and erroneous protocol data by the receiving entity. These procedures are called "error handling procedures", but in addition to providing recovery mechanisms for error situations they define a compatibility mechanism for future extensions of the protocols.
+
+Most error handling procedures are mandatory for the MS but optional for the network. Detailed error handling procedures in the network are implementation dependent and may vary from PLMN to PLMN.
+
+In this subclause the following terminology is used:
+
+  -	an IE is defined to be syntactically incorrect in a message if it contains at least one value defined as "reserved", or if its value part violates rules. However it is not a syntactical error that a type 4 IE specifies in its length indicator a greater length than defined;
+
+  -	a message is defined to have semantically incorrect contents if it contains information which, possibly dependant on the state of the receiver, is in contradiction to the resources of the receiver and/or to the procedural part of 3GPP TS 24.011.
+
+
+9.2	CP Error Handling
+
+Upon receiving a CP-ERROR message the SMC-CS entity (in any state) shall pass an error indication to SM-RL, pass an MM-connection release request to the MM-sublayer, and enter the Idle State.
+
+After sending a CP-ERROR message the SMC-CS entity (in any state) shall pass an MM-connection release request to the MM sublayer and then enter the Idle State.
+
+Upon receiving a CP-ERROR message the SMC-GP entity (in any state) shall pass an error indication to SM-RL and enter the Idle State.
+
+After sending a CP-ERROR message the SMC-GP entity (in any state) shall enter the Idle State.
+
+
+9.2.1	Message too short
+
+When a message is received that is too short to contain a complete message type information element, that message shall be ignored, see 3GPP TS 24.007 [4].
+
+
+9.2.2	Unknown or unforeseen transaction identifier
+
+The Mobile Station shall ignore a CP message (CP-DATA, CP-ACK, CP-ERROR) received with TI value "111". Whenever a CP-ACK message is received specifying a Transaction Identifier which is not associated with an active SM transfer, the mobile station shall discard the message and return a CP-ERROR message with cause #81, "Invalid Transaction Identifier" using the received Transaction Identifier, if an appropriate connection exists. The Mobile Station shall ignore a CP-ERROR message that is received specifying a Transaction Identifier which is not associated with an active SM transfer. The Mobile Station shall ignore a CP-DATA message that is received specifying a Transaction Identifier which is not associated with an active SM transfer and with transaction identifier flag set to "1".
+
+The same procedures may apply to the network.
+
+
+9.2.3	Unknown or unforeseen message type
+
+If the Mobile Station receives a message with message type not defined for the PD or not implemented by the receiver, it shall ignore the message and return a CP-ERROR message with cause #97 "message type non-existent or not implemented", if an appropriate connection exists.
+
+  NOTE:	A message type not defined for the PD in the given direction is regarded by the receiver as a message type not defined for the PD, see 3GPP TS 24.007 [4].
+
+If the Mobile Station receives a message not consistent with the protocol state, the Mobile Station shall ignore the message and return a CP-ERROR message with cause #98 "Message type not compatible with the short message protocol state", if an appropriate connection exists.
+
+The network may follow the same procedures.
+
+
+9.2.4	Non-semantical mandatory information element errors
+
+When on receipt of a message:
+
+  -	an "imperative message part" error; or
+
+  -	a "missing mandatory IE" error.
+
+is diagnosed or when a message containing a syntactically incorrect mandatory IE is received, the mobile station shall proceed as follows.
+
+When the corresponding SM transfer is not seen as successfully transferred, i.e. the transaction is not completed, the mobile station shall ignore the message and return a CP-ERROR message with cause #96 "invalid mandatory information", if an appropriate connection exists.
+
+When the SM transfer is seen as successfully transferred, the mobile station shall ignore the message and enter the Idle State.
+
+In the case that the message received is a CP-ERROR message, the mobile station shall ignore the message and enter the Idle State.
+
+The network may follow the applicable procedures defined in this subclause.
+
+
+9.2.5	Messages with semantically incorrect contents
+
+When a message with semantically incorrect contents is received, the foreseen reactions of the procedural part of 3GPP TS 24.011 are performed. If however no such reactions are specified, the mobile station shall proceed as follows:
+
+  -	when the corresponding SM transfer is not seen as successfully transferred, the mobile station shall ignore the message and return a CP-ERROR message with cause value #95 "semantically incorrect message", if an appropriate connection exists;
+
+  -	when the SM transfer is seen as successfully transferred, the mobile station shall ignore the message and enter the Idle State;
+
+  -	in the case that the message received is a CP-ERROR message, the mobile station shall ignore the message and enter the Idle State.
+
+The network may follow the same procedure.
+
+
+9.3	RP Error Handling
+
+Upon receiving or sending an RP-ERROR message the SMR entity shall behave as described in the procedural description in clause 6.
+
+
+9.3.1	Message too short
+
+When a message is received that is too short to contain a complete message type information element and Message Reference, that message shall be ignored.
+
+
+9.3.2	Unknown or unforeseen Message Reference
+
+Whenever any RP-ACK message is received specifying a Message Reference which is not associated with an active SM transfer, the mobile station shall discard the message and return an RP-ERROR message with cause #81, "Invalid short message transfer reference value" using the received Message Reference, if an appropriate connection exists.
+
+When an RP-ERROR message is received specifying a Message Reference which is not associated with an active SM transfer, the mobile station shall discard the message. If that discarded RP-ERROR message was part of MT SM transaction a request to abort the CM-connection shall be passed to the CM-sublayer.
+
+When the mobile station's SMR entity is not in the Idle state, and it receives an RP-DATA message specifying a Message Reference which is not associated with the active SM transfer, then it shall either:
+
+  -	send an RP-ERROR message with cause #81, "Invalid short message transfer reference value" using the received Message Reference, if an appropriate connection exists; or
+
+  -	behave as described below for the receipt of an message not consistent with the protocol state.
+
+The same procedures may apply to the network.
+
+
+9.3.3	Unknown or unforeseen message type
+
+If the Mobile Station receives a RP-message indicating a value of the message type indicator (MTI) defined as reserved, it shall ignore the message and return an RP-ERROR message with cause #97 "message type non-existent or not implemented", if an appropriate connection exists.
+
+If the Mobile Station receives a message (except RP-ERROR) not consistent with the protocol state, the Mobile Station shall ignore the message and return a RP-ERROR message with cause #98 "Message type not compatible with Short Message protocol state", if an appropriate connection exists.
+
+If the Mobile Station receives an RP-ERROR message not consistent with the protocol state, the Mobile Station shall ignore the message. If that discarded RP-ERROR message was part of MT SM transaction a request to abort the CM-connection shall be passed to the CM-sublayer.
+
+The network may follow the same procedures.
+
+
+9.3.4	Non-semantical mandatory information element errors
+
+When on receipt of a message:
+
+  -	an "imperative message part" error; or
+
+  -	a "missing mandatory IE" error;
+
+is diagnosed or when a message containing a syntactically incorrect mandatory IE is received, the mobile station shall (except for the case of a reserved value of the MTI as defined above) proceed as follows:
+
+  -	when the message is an RP-DATA or RP-ACK, the mobile station shall ignore the message and return an RP-ERROR message with cause #96 "invalid mandatory information", if an appropriate connection exists;
+
+  -	when the message is an RP-ERROR, the mobile station shall treat the message as an RP-ERROR message carrying RP-Cause value 111 without any diagnostic field, and with no RP-User Data.
+
+The network may follow the applicable procedures defined in this subclause.
+
+
+9.3.5	Messages with semantically incorrect contents
+
+When a message with semantically incorrect contents is received, the foreseen reactions of the procedural part of 3GPP TS 24.011 are performed. If however no such reactions are specified then:
+
+  -	if the message was not an RP-ERROR message, the MS shall ignore the message and return an RP-ERROR message with cause value #95 "semantically incorrect message", if an appropriate connection exists; while
+
+  -	if the message was an RP-ERROR message, the mobile station shall treat the message as an RP-ERROR message carrying RP-Cause value #111 without any diagnostic field, and with no RP-User Data.
+
+The network may follow the same procedure.
+
+
+10	Timers
+
+
+10.1	Timers when the MS is not using EPS services with control plane CIoT EPS optimization
+
+The present document places the following requirements on the timers described in the present document:
+
+  -	timer TR1M shall be greater than 35 seconds and less than 45 seconds;
+
+  -	the value of timer TRAM shall be greater than 25 seconds and less than 35 seconds;
+
+  -	timer TR2M shall be greater than 12 seconds and less than 20 seconds.
+
+
+10.2	Timers when the MS is using EPS services with control plane CIoT EPS optimization
+
+For timer TR2M and TRAM, requirements remain the same as described in subclause 10.1.
+
+For timer TR1M, the requirement is as follows:
+
+  -	if an MS is in NB-S1 mode (see 3GPP TS 24.301 [10]):
+
+    -	timer TR1M shall be greater than 35+360 seconds and less than 45+360 seconds; and
+
+  -	if an MS supports CE mode B and operates in WB-S1 mode in either CE mode A or CE mode B (see 3GPP TS 24.301 [10]):
+
+    -	timer TR1M shall be greater than 195 seconds and less than 205 seconds;
+
+Timer TC1* typically varies with the length of the CP-DATA:
+
+  -	if an MS is in NB-S1 mode, then for the first transmission of the CP-DATA the value of timer TC1* needs to be increased by 240 seconds from the normal value used based on the length of the CP-DATA and for the CP-DATA retransmissions the value of timer TC1* needs to be increased by 40 seconds from normal value value; and
+
+  -	if an MS supports CE mode B and operates in WB-S1 mode in either CE mode A or CE mode B, the value of timer TC1* needs to be increased by 40 seconds from the normal value used based on the length of the CP-DATA.
+
+
+
+Annex A (informative):
+Arrow diagrams
+
+Arrow diagram A1:
+
+    	The diagram shows CS MO-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+Arrow diagram A2:
+
+    	The diagram shows CS MT-messaging by means of interlayer service primitives and the actual messages being transferred between the layer entities in A/Gb mode.
+
+Arrow diagram A5:
+
+    	The diagram shows GPRS MO-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	LLSMS-primitives indicate services provided by LLC to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledge CP-DATA reception on CM.
+
+Arrow diagram A6:
+
+    	The diagram shows GPRS MT-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities in A/Gb mode.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	LLSMS-primitives indicate services provided by LLC to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledge CP-DATA reception on CM.
+
+Arrow diagram A7:
+
+    	The diagram shows Iu mode PS MO-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	PMMSMS-primitives indicate services provided by GMM to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledge CP-DATA reception on CM.
+
+Arrow diagram A8:
+
+    	The diagram shows Iu mode PS MT-messaging by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	PMMSMS-primitives indicate services provided by GMM to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledge CP-DATA reception on CM.
+
+
+
+
+  NOTE:	Diagrams for supporting SMS through the EPS are not provided.
+
+Arrow diagram A9:
+
+    	The diagram shows if packet-switched service is used, S1 mode EPS MO-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	EMMSMS-primitives indicate services provided by EMM to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledges CP-DATA reception on CM.
+
+Arrow diagram A9a:
+
+    	The diagram shows if packet-switched service is used and the UE is using EPS services with control plane CIoT EPS optimization, S1 mode EPS MO-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	EMMSMS-primitives indicate services provided by EMM to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledges CP-DATA reception on CM.
+
+Arrow diagram A10:
+
+    	The diagram shows if packet-switched service is used, S1 mode EPS MT-messaging by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+    -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+    -	EMMSMS-primitives indicate services provided by EMM to CM.
+
+    -	CP-DATA is the CM-message carrying SM-RP data units.
+
+    -	CP-ACK acknowledges CP-DATA reception on CM.
+
+
+Mobile Originated Messaging on CM-sublayer
+
+[pic]
+
+Arrow diagram A1
+
+Mobile Terminated Messaging on CM-sublayer
+
+[pic]
+
+Arrow diagram A2
+
+
+GPRS Mobile Originated Messaging on CM-sublayer in A/Gb mode
+
+[pic]
+
+Arrow diagram A5
+
+
+GPRS Mobile Terminated Messaging on CM-sublayer in A/Gb mode
+
+[pic]
+
+Arrow diagram A6
+
+
+GPRS Mobile Originated Messaging on CM-sublayer in Iu mode
+
+[pic]
+
+  NOTE:	Service Request Procedure may not be initiated
+Arrow diagram A7
+
+
+GPRS Mobile Terminated Messaging on CM-sublayer in Iu mode
+
+[pic]
+
+Arrow diagram A8
+
+LTE Mobile Originated Messaging on CM-sublayer in S1 mode if  packet-switched service is used
+
+[pic]
+
+  NOTE:	Service Request Procedure may not be initiated if RRC connection already exists
+Arrow diagram A9
+
+
+LTE Mobile Originated Messaging on CM-sublayer in S1 mode if packet-switched service is used and the UE is using EPS services with control plane CIoT EPS optimization
+
+[pic]
+
+  NOTE:	Service Request Procedure may not be initiated if RRC connection already exists
+Arrow diagram A9a
+
+LTE Mobile Terminated Messaging on CM-sublayer in S1 mode if  packet-switched service is used
+
+[pic]
+
+Arrow diagram A10
+
+
+
+
+Annex B (normative):
+SDL-description of the CM-layer
+
+
+B.1	Introduction
+
+This annex contains an SDL-description of the Connection Management Sublayer in terms of the Short Message Service Support. The CM- sublayer provides services to Short Message Relay Layer.
+
+The SDLs contain a mixture of peer to peer messages and conceptual primitives between the layers SM-RL, CM, MM and LLC, as viewed by the SMC entities. SDL-1/2/3 show the CS SMC entity on MS-side for Mobile Originated (MO) short message transfer, SDL-4/5/6 show the CS SMC entity on MS-side for Mobile Terminated (MT) short message transfer, SDL-7/8/9 show the CS SMC entity on the network side for Mobile Originated (MO) short message transfer, and SDL-10/11/12 show the CS SMC entity on the network side for Mobile Terminated (MT) short message transfer.
+
+SDL-13/14/15 show the GPRS SMC entity on MS-side for Mobile Originated (MO) short message transfer, SDL-16/17/18 show the GPRS SMC entity on MS-side for Mobile Terminated (MT) short message transfer, SDL-19/20/21 show the GPRS SMC entity on the network side for Mobile Originated (MO) short message transfer, and SDL-22/23/24 show the GPRS SMC entity on the network side for Mobile Terminated (MT) short message transfer.
+
+SDL-25/26/27 show the EPS SMC entity on network side for Mobile Originated (MO) short message transfer, SDL-28/29/30 show the EPS SMC entity on network side for Mobile Terminated (MT) short message transfer, SDL-31/32/33 show the EPS SMC entity on the MS-side for Mobile Originated (MO) short message transfer, and SDL-34/35/36 show the EPS SMC entity on the MS-side for Mobile Terminated (MT) short message transfer.
+
+SDL-37/38/39 show the 5GS SMC entity on network side for Mobile Originated (MO) short message transfer, SDL-40/41/42 show the 5GS SMC entity on network side for Mobile Terminated (MT) short message transfer, SDL-43/44/45 show the 5GS SMC entity on the MS-side for Mobile Originated (MO) short message transfer, and SDL-46/47/48 show the 5GS SMC entity on the MS-side for Mobile Terminated (MT) short message transfer.
+
+The lower layers (below MM, GMM, EMM and LLC) are transparent to an SMC entity.
+
+
+[pic]
+
+MO-SMC-CP-entity on MS-side
+SDL-1
+
+
+[pic]
+
+  NOTE:	The release is delayed until the next state
+MO-SMC-CP-entity on MS-side
+SDL-2
+
+
+[pic]
+
+MO-SMC-CP-entity on MS-side
+SDL-3
+
+
+[pic]
+
+MO-SMC-CP-entity on MS-side
+State transition diagram
+
+
+[pic]
+
+MT-SMC-CP-entity on MS-side
+Initiating message transfer
+SDL-4
+
+
+[pic]
+
+  NOTE:	The release is delayed until the next state
+MT-SMC-CP-entity on MS-side
+MM-connection established
+SDL-5
+
+
+[pic]
+
+MT-SMC-CP-entity on MS-side
+MM-connection released
+SDL-6
+
+
+[pic]
+
+MT-SMC-CP-entity on MS-side
+State transition diagram
+
+
+[pic]
+
+MO-SMC-CP-entity on Network-side
+SDL-7
+
+
+[pic]
+
+  NOTE:	The release is delayed until the next state
+MO-SMC-CP-entity on Network-side
+SDL-8
+
+
+[pic]
+
+  NOTE:	This message is a retransmission from the MS
+MO-SMC-CP-entity on Network-side
+SDL-9
+
+
+[pic]
+
+MO-SMC-CP-entity on Network-side
+State transition diagram
+
+
+[pic]
+
+MT-SMC-CP-entity on Network-side
+SDL-10
+
+
+[pic]
+
+  NOTE:	The release is delayed until the next state
+MT-SMC-CP-entity on Network-side
+MM-connection established
+SDL-11
+
+
+[pic]
+
+MT-SMC-CP-entity on Network-side
+Message transfer active
+SDL-12
+
+[pic]
+
+MT-SMC-CP-entity on Network-side
+State transition diagram
+
+[pic]
+
+MO-SMC-GP entity on MS-side for GPRS
+SDL-13
+
+[pic]
+
+MO-SMC-GP entity on MS-side for GPRS
+SDL-14
+
+[pic]
+
+MO-SMC-GP entity on MS-side for GPRS
+SDL-15
+
+[pic]
+
+MO-SMC-GP entity on MS-side for GPRS
+State transition diagram
+
+[pic]
+
+MT-SMC-GP entity on MS-side for GPRS
+SDL-16
+
+[pic]
+
+MT-SMC-GP entity on MS-side for GPRS
+SDL-17
+
+[pic]
+
+  Note:	The MNSMS-REL-Req is delayed until the next state
+
+
+MT-SMC-GP entity on MS-side for GPRS
+SDL-18
+
+[pic]
+
+MT-SMC-GP entity on MS-side for GPRS
+State transition diagram
+
+
+[pic]
+
+MO-SMC-GP entity on Network side for GPRS
+SDL-19
+
+[pic]
+
+MO-SMC-GP entity on Network side for GPRS
+SDL-20
+
+[pic]
+
+  Note:	The MNSMS-REL-Req is delayed until next state
+
+
+MO-SMC-GP entity on Network side for GPRS
+SDL-21
+
+[pic]
+
+MO-SMC-GP entity on Network-side for GPRS
+State transition diagram
+
+
+[pic]
+
+MT-SMC-GP entity on Network-side for GPRS
+SDL-22
+
+[pic]
+
+MT-SMC-GP entity on Network-side for GPRS
+SDL-23
+
+[pic]
+
+MT-SMC-GP entity on Network-side for GPRS
+SDL-24
+
+
+[pic]
+
+MT-SMC-GP entity on Network-side for GPRS
+State transition diagram
+
+
+
+[pic]
+
+MO-SMC-EP entity on Network side for EPS when packet-switched service is used
+SDL-25
+
+[pic]
+
+MO-SMC-EP entity on Network side for EPS when packet-switched service is used
+SDL-26
+
+[pic]
+
+MO-SMC-EP entity on Network side for EPS when packet-switched service is used
+SDL-27
+
+[pic]
+
+MO-SMC-EP entity on Network-side for EPS when packet-switched service is used
+State transition diagram
+
+[pic]
+
+MT-SMC-EP entity on Network-side for EPS when packet-switched service is used
+SDL-28
+
+[pic]
+
+MT-SMC-EP entity on Network-side for EPS when packet-switched service is used
+SDL-29
+
+[pic]
+
+MT-SMC-EP entity on Network-side for EPS when packet-switched service is used
+SDL-30
+
+[pic]
+
+MT-SMC-EP entity on Network-side for EPS when packet-switched service is used
+State transition diagram
+
+
+
+[pic]
+
+
+
+MO-SMC-EP entity on MS-side for EPS when the UE is not using EPS services with control plane CIoT EPS optimization
+SDL-31
+
+[pic]
+
+
+
+MO-SMC-EP entity on MS-side for EPS when the UE is using EPS services with control plane CIoT EPS optimization
+SDL-31a
+
+[pic]
+
+
+
+MO-SMC-EP entity on MS-side for EPS
+SDL-32
+
+[pic]
+
+
+
+MO-SMC-EP entity on MS-side for EPS
+SDL-33
+
+[pic]
+
+
+
+MO-SMC-EP entity on MS-side for EPS
+State transition diagram
+
+[pic]
+
+
+
+MT-SMC-EP entity on MS-side for EPS
+SDL-34
+
+[pic]
+
+
+
+MT-SMC-EP entity on MS-side for EPS
+SDL-35
+
+[pic]
+
+
+
+MT-SMC-EP entity on MS-side for EPS
+SDL-36
+
+[pic]
+
+
+
+MT-SMC-EP entity on MS-side for EPS
+State transition diagram
+
+[pic]
+
+MO-SMC-5G entity on Network side for 5GS when packet-switched service is used
+SDL-37
+
+[pic]
+
+
+
+
+
+MO-SMC-5G entity on Network side for 5GS when packet-switched service is used
+SDL-38
+
+
+
+
+
+[pic]
+
+MO-SMC-5G entity on Network side for 5GS when packet-switched service is used
+SDL-39
+
+[pic]
+
+MO-SMC-5G entity on Network-side for 5GS when packet-switched service is used
+State transition diagram
+
+[pic]
+
+MT-SMC-5G entity on Network-side for 5GS when packet-switched service is used
+SDL-40
+
+[pic]
+
+MT-SMC-5G entity on Network-side for 5GS when packet-switched service is used
+SDL-41
+
+
+
+[pic]
+
+MT-SMC-5G entity on Network-side for EPS when packet-switched service is used
+SDL-41
+
+[pic]
+
+MT-SMC-5G entity on Network-side for 5GS when packet-switched service is used
+State transition diagram
+
+
+
+
+
+
+
+[pic]
+
+
+
+MO-SMC-EP entity on MS-side for EPS
+SDL-42
+
+[pic]
+
+
+
+MO-SMC-5G entity on MS-side for 5GS
+SDL-43
+
+[pic]
+
+
+
+MO-SMC-5G entity on MS-side for 5GS
+SDL-44
+
+[pic]
+
+
+
+MO-SMC-5G entity on MS-side for 5GS
+State transition diagram
+
+[pic]
+
+
+
+MT-SMC-5G entity on MS-side for 5GS
+SDL-45
+
+[pic]
+
+
+
+MT-SMC-5G entity on MS-side for 5GS
+SDL-46
+
+[pic]
+
+
+
+MT-SMC-EP entity on MS-side for EPS
+SDL-47
+
+[pic]
+
+
+
+MT-SMC-5G entity on MS-side for 5GS
+State transition diagram
+
+
+
+
+Annex C (informative):
+Arrow diagrams
+
+Arrow diagram C1:
+
+The diagram reflects MO-message transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+  -	SM-RL-primitives indicate services provided by SM-RL to SM-TL and RL (* see note).
+
+  -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+  -	RP-DATA is the SM-RL message carrying SM-TP data units.
+
+  -	RP-ACK acknowledges RP-DATA reception on SM-RL.
+
+Arrow diagram C2:
+
+The diagram reflects MT-messaging by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+  -	SM-RL-primitives indicate services provided by SM-RL to SM-TL and RL (* see note).
+
+  -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+  -	RP-DATA is the SM-RL message carrying SM-TP data units.
+
+  -	RP-ACK acknowledges RP-DATA reception on SM-RL.
+
+Arrow diagram C3:
+
+The diagram reflects memory available notification transfer by means of interlayer service primitives and the actual messages being transferred between the layer entities.
+
+  -	SM-RL-primitives indicate services provided by SM-RL to SM-TL and RL (* see note).
+
+  -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+  -	RP-SMMA is the SM-RL message indicating that the mobile has memory available to receive one or more short messages.
+
+  -	RP-ACK acknowledges RP-SMMA reception on SM-RL.
+
+  -	RP-ERROR reports a failure in the notification procedure on the network side.
+
+
+Arrow diagram C4:
+
+The diagram reflects the abort of any retransmission of a memory available notification by SM-RL by means of the SM-RL-MEMORY-AVAILABLE interlayer service primitive request with the SM-MEM-NOTIF-ABORT parameter present. The use of this primitive and the associated parameter are, of course, local to the mobile station.
+
+  -	SM-RL-primitives indicate services provided by SM-RL to SM-TL and RL (note).
+
+  -	MNSMS-primitives indicate services provided by CM to SM-RL.
+
+  -	RP-SMMA is the SM-RL message indicating that the mobile has memory available to receive one or more short messages.
+
+  -	RP-ACK acknowledges RP-SMMA reception on SM-RL.
+
+  -	RP-ERROR reports a failure in the notification procedure on the network side.
+
+  NOTE:	The SM-RL being the upper layer in the MSC, an interworking function between SM-RL-procedures and MAP-procedure is necessary. The term "RL" is used in the diagrams to indicate this function (see figure).
+
+
+
+|                   | |                       |                    |   |       |
+|                   |       |Interw. func.                |       |          |
+|SM-RL              |SM-RL-                 |MAP-                 |          |
+|                   |proc.                  |proc.                |          |
+|                   | |                       |                    |   |       |
+
+
+
+Mobile Originated Messaging on SM-RL
+
+[pic]
+
+Arrow diagram C1
+
+Mobile Terminated Messaging on SM-RL
+
+[pic]
+
+Arrow diagram C2
+
+Memory Available Notification on SM-RL
+
+[pic]
+
+Arrow diagram C3
+
+Memory Available Notification Abort on SM-RL
+
+[pic]
+
+  NOTE:	Dashed lines indicates messages that may be sent, even though an abort request was given
+
+
+Arrow diagram C4
+
+
+Annex D (normative):
+SDL-description of the short message relay layer
+
+
+D.1	Introduction
+
+This annex contains an SDL-description of the Short Message Relay Layer in terms of the Short Message Service Support. The Short Message Relay Layer provides services to Short Message Transfer Layer.
+
+The SDLs contain a mixture of peer to peer messages and conceptual primitives between the layers SM-TL, SM-RL and CM, as viewed by the SMR entities. SDL-1/2/3 show the SMR entity on MS-side, and SDL-4/5 on the network side.
+
+The lower layers (below CM) are transparent to an SMR entity.
+
+
+[pic]
+
+SMR-entity on MS-side
+MO Short Message transfer
+SDL-1
+
+[pic]
+
+SMR-entity on MS-side
+MT Short Message transfer
+SDL-2
+
+[pic]
+
+SMR-entity on MS-side
+Memory Available Notification
+SDL-3
+
+[pic]
+
+SMR-entity on MS-side
+State transition diagram
+
+[pic]
+
+SMR-entity on Network-side
+MT Short Message transfer
+SDL-4
+
+[pic]
+
+SMR-entity on Network-side
+MO Short Message and Notification transfer
+SDL-5
+
+[pic]
+
+SMR-entity on Network-side
+State transition diagram
+
+
+
+Annex E (informative):
+Cause definition
+
+E-1: CP-cause definition.
+
+Cause no. 17: "Network failure".
+
+    	This cause is sent to the MS if the MSC cannot service an MS generated request because of PLMN failures, e.g. problems in MAP.
+
+Cause no. 22: "Congestion".
+
+    	This cause is sent if the service request cannot be actioned because of congestion (e.g. no channel, facility busy/congested etc.).
+
+Cause no. 81: "Invalid Transaction Identifier".
+
+    	This cause indicates that the equipment sending this cause has received a message with a Transaction Identifier which is currently not use on the MS - network interface.
+
+Cause no. 95: "Semantically incorrect message".
+
+    	This cause is used to report the receipt of a message with semantically incorrect content.
+
+Cause no. 96: "Invalid mandatory information".
+
+    	This cause indicates that the equipment sending this cause has received a message with non-semantical mandatory information element errors.
+
+Cause no. 97: "Message type non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message with a message type it does not recognize either because this is a message not defined or defined but not implemented by the equipment sending this cause.
+
+Cause no. 98: "Message not compatible with short message protocol state".
+
+    	This cause indicates that the equipment sending this cause has received a message not compatible with the Short Message protocol state.
+
+Cause no. 99: "Information element non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message which includes information elements not recognized because the information element identifier is not defined or it is defined but not implemented by the equipment sending the cause.
+
+    	However, the information element is not required to be present in the message in order for the equipment sending the cause to process the message.
+
+Cause no. 111: "Protocol error, unspecified".
+
+    	This cause is used to report a protocol error event only when no other cause applies.
+
+E-2: RP-cause definition mobile originating SM-transfer.
+
+Cause no. 1: "Unassigned (unallocated) number".
+
+    	This cause indicates that the destination requested by the Mobile Station cannot be reached because, although the number is in a valid format, it is not currently assigned (allocated).
+
+Cause no. 8: "Operator determined barring".
+
+    	This cause indicates that the MS has tried to send a mobile originating short message when the MS's network operator or service provider has forbidden such transactions.
+
+Cause no. 10: "Call barred".
+
+    	This cause indicates that the outgoing call barred service applies to the short message service for the called destination.
+
+Cause no. 21: "Short message transfer rejected".
+
+    	This cause indicates that the equipment sending this cause does not wish to accept this short message, although it could have accepted the short message since the equipment sending this cause is neither busy nor incompatible.
+
+Cause no. 27: "Destination out of service".
+
+    	This cause indicates that the destination indicated by the Mobile Station cannot be reached because the interface to the destination is not functioning correctly. The term "not functioning correctly" indicates that a signalling message was unable to be delivered to the remote user; e.g., a physical layer or data link layer failure at the remote user, user equipment off-line, etc.
+
+Cause no. 28: "Unidentified subscriber".
+
+    	This cause indicates that the subscriber is not registered in the PLMN (i.e. IMSI not known).
+
+Cause no. 29: "Facility rejected".
+
+    	This cause indicates that the facility requested by the Mobile Station is not supported by the PLMN.
+
+Cause no. 30: "Unknown subscriber".
+
+    	This cause indicates that the subscriber is not registered in the HLR (i.e. IMSI or directory number is not allocated to a subscriber).
+
+Cause no. 38: "Network out of order".
+
+    	This cause indicates that the network is not functioning correctly and that the condition is likely to last a relatively long period of time; e.g., immediately reattempting the short message transfer is not likely to be successful.
+
+Cause no. 41: "Temporary failure".
+
+    	This cause indicates that the network is not functioning correctly and that the condition is not likely to last a long period of time; e.g., the Mobile Station may wish to try another short message transfer attempt almost immediately.
+
+Cause no. 42: "Congestion".
+
+    	This cause indicates that the short message service cannot be serviced because of high traffic.
+
+Cause no. 47: "Resources unavailable, unspecified".
+
+    	This cause is used to report a resource unavailable event only when no other cause applies.
+
+Cause no. 50: "Requested facility not subscribed".
+
+    	This cause indicates that the requested short message service could not be provided by the network because the user has not completed the necessary administrative arrangements with its supporting networks.
+
+Cause no. 69: "Requested facility not implemented".
+
+    	This cause indicates that the network is unable to provide the requested short message service.
+
+Cause no. 81: "Invalid short message transfer reference value".
+
+    	This cause indicates that the equipment sending this cause has received a message with a short message reference which is not currently in use on the MS-network interface.
+
+Cause no. 95: "Invalid message, unspecified".
+
+    	This cause is used to report an invalid message event only when no other cause in the invalid message class applies.
+
+Cause no. 96: "Invalid mandatory information".
+
+    	This cause indicates that the equipment sending this cause has received a message where a mandatory information element is missing and/or has a content error (the two cases are indistinguishable).
+
+Cause no. 97: "Message type non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message with a message type it does not recognize either because this is a message not defined or defined but not implemented by the equipment sending this cause.
+
+Cause no. 98: "Message not compatible with short message protocol state".
+
+    	This cause indicates that the equipment sending this cause has received a message such that the procedures do not indicate that this is a permissible message to receive while in the short message transfer state.
+
+Cause no. 99: "Information element non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message which includes information elements not recognized because the information element identifier is not defined or it is defined but not implemented by the equipment sending the cause.
+
+    	However, the information element is not required to be present in the message in order for the equipment sending the cause to process the message.
+
+Cause no. 111: "Protocol error, unspecified".
+
+    	This cause is used to report a protocol error event only when no other cause applies.
+
+Cause no. 127: "Interworking, unspecified".
+
+    	This cause indicates that there has been interworking with a network which does not provide causes for actions it takes; thus, the precise cause for a message which is being send cannot be ascertained.
+
+E-3: RP-cause definition mobile terminating SM-transfer.
+
+Cause no. 22: "Memory capacity exceeded".
+
+    	This cause indicates that the mobile station cannot store the incoming short message due to lack of storage capacity.
+
+Cause no. 81: "Invalid short message reference value".
+
+    	This cause indicates that the equipment sending this cause has received a message with a short message reference which is not currently in use on the MS-network interface.
+
+Cause no. 95: "Invalid message, unspecified".
+
+    	This cause is used to report an invalid message event only when no other cause in the invalid message class applies.
+
+Cause no. 96: "Invalid mandatory information".
+
+    	This cause indicates that the equipment sending this cause has received a message where a mandatory information element is missing and/or has a content error (the two cases are indistinguishable).
+
+Cause no. 97: "Message type non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message with a message type it does not recognize either because this is a message not defined or defined but not implemented by the equipment sending this cause.
+
+Cause no. 98: "Message not compatible with short message protocol state".
+
+    	This cause indicates that the equipment sending this cause has received a message such that the procedures do not indicate that this is a permissible message to receive while in the short message transfer state.
+
+Cause no. 99: "Information element non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message which includes information elements not recognized because the information element identifier is not defined or it is defined but not implemented by the equipment sending the cause.
+
+    	However, the information element is not required to be present in the message in order for the equipment sending the cause to process the message.
+
+Cause no. 111: "Protocol error, unspecified".
+
+    	This cause is used to report a protocol error event only when no other cause applies.
+
+E-4: RP-Cause definition memory available notification.
+
+Cause no. 30: "Unknown Subscriber".
+
+    	This cause indicates that the subscriber is not registered in the HLR (i.e. IMSI or directory number is not allocated to a subscriber).
+
+Cause no. 38: "Network out of order".
+
+    	This cause indicates that the network is not functioning correctly and that the condition is likely to last a relatively long period of time; e.g., immediately reattempting the short message transfer is not likely to be successful.
+
+Cause no. 41: "Temporary failure".
+
+    	This cause indicates that the network is not functioning correctly and that the condition is not likely to last a long period of time; e.g., the Mobile Station may wish to try another short message transfer attempt almost immediately.
+
+Cause no. 42: "Congestion".
+
+    	This cause indicates that the short message service cannot be serviced because of high traffic.
+
+Cause no. 47: "Resources unavailable, unspecified".
+
+    	This cause is used to report a resource unavailable event only when no other cause applies.
+
+Cause no. 69: "Requested facility not implemented".
+
+    	This cause indicates that the network is unable to provide the requested memory available notification service.
+
+Cause no. 95: "Invalid message, unspecified".
+
+    	This cause is used to report an invalid message event only when no other cause in the invalid message class applies.
+
+Cause no. 96: "Invalid mandatory information".
+
+    	This cause indicates that the equipment sending this cause has received a message where a mandatory information element is missing and/or has a content error (the two cases are indistinguishable).
+
+Cause no. 97: "Message type non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message with a message type it does not recognize either because this is a message not defined or defined but not implemented by the equipment sending this cause.
+
+Cause no. 98: "Message not compatible with short message protocol state".
+
+    	This cause indicates that the equipment sending this cause has received a message such that the procedures do not indicate that this is a permissible message to receive while in the short message transfer state.
+
+Cause no. 99: "Information element non-existent or not implemented".
+
+    	This cause indicates that the equipment sending this cause has received a message which includes information elements not recognized because the information element identifier is not defined or it is defined but not implemented by the equipment sending the cause.
+
+    	However, the information element is not required to be present in the message in order for the equipment sending the cause to process the message.
+
+Cause no. 111: "Protocol error, unspecified".
+
+    	This cause is used to report a protocol error event only when no other cause applies.
+
+Cause no. 127: "Interworking, unspecified".
+
+    	This cause indicates that there has been interworking with a network which does not provide causes for actions it takes; thus, the precise cause for a message which is being send cannot be ascertained.
+
+
+
+Annex F (informative):
+LAPDm SAPI 3 handling for short message service
+
+This annex describes several typical SMS message transfer scenarios for circuit switched GSM.
+
+For GPRS SMS transfer, refer to 3GPP TS 23.060 [3a] for channel set up and upper layer message flow.
+
+Case A: Mobile originating short message transfer, no parallel call.
+
+    	The mobile station side will initiate SAPI 3 establishment by a SABM command on the SDCCH after the cipher mode has been set. If no hand over occurs, the SAPI 3 link will stay up until the last CP-ACK is received by the MSC, and the clearing procedure is invoked.
+
+Case B: Mobile terminating short message transfer, no parallel call.
+
+    	The network side, i.e. the BSS will initiate SAPI3 establishment by a SABM command on the SDCCH when the first CP-Data message is received from the MSC. If no hand over occurs, the link will stay up until the MSC has given the last CP-ack and invokes the clearing procedure.
+
+Case C: Mobile originating short message transfer, parallel call.
+
+    	The mobile station will send a SABM command on the SACCH when a CM_SERV_ACC message has been received from the network, allowing the short message transfer to start. If no hand over occurs the link will stay up until the MSC orders a explicit release, or the clearing procedure is invoked. If the parallel call is cleared before the short message transfer is finalized, the MSC will delay the clearing procedure toward the BSS, i.e. the channel release procedure is delayed.
+
+Case D: Mobile terminating short message transfer, parallel call.
+
+    	The network side, i.e. the BSS will initiate SAPI3 establishment by a SABM command on the SACCH when the first CP-DATA message is received from the MSC. The further handling is exactly as described for case C.
+
+Case E: Mobile terminating short message transfer together with Inter-MSC hand over, parallel call.
+
+    	The MAP procedures "Forward access signalling" and "Process access signalling" will be used between the two MSCs to transfer the CP-DATA, CP-ACK and CP-ERROR messages.
+
+Case F: Mobile terminating short message transfer on SDCCH channel together with Inter-MSC hand over.
+
+    	The MAP procedures "Forward access signalling" and "Process access signalling" will be used between the two MSC's to transfer the CP-DATA, CP-ACK and CP-ERROR messages.
+
+
+[pic]
+
+Figure F1/3GPP TS 24.011: Mobile originated Short Message on SDCCH
+
+[pic]
+
+Figure F2/3GPP TS 24.011: Mobile terminated Short Message on SDCCH
+
+[pic]
+
+Figure F3/3GPP TS 24.011: Mobile originated Short Message on SACCH
+
+[pic]
+
+Figure F4/3GPP TS 24.011: Mobile terminated Short Message on SACCH
+
+
+[pic]
+
+Figure F5/3GPP TS 24.011: Inter/MSC handover during Short Message transfer on SACCH
+
+[pic]
+
+Figure F6/3GPP TS 24.011: Inter/MSC handover during Short Message transfer on SDCCH
+
+
+
+Annex G (informative):
+Change history
+
+
+
+|Change history                                                                                                                            |
+|TSG SA#       |Spec            |Version |CR        |<Phase>      |New Version       |Subject/Comment                                      |
+|CN#04         |24.011          |        |          |             |3.0.0             |Transferred to TSG CN at ETSI SMG#29. Under TSG TSG  |
+|              |                |        |          |             |                  |CN Change Control                                    |
+|CN#06         |24.011          |3.0.0   |001r6     |R99          |3.1.0             |Using MM sublayer for PS-SMS message transfer        |
+|CN#07         |24.011          |3.1.0   |003r1     |R99          |3.2.0             |SMC-GP SDL modification to transfer SMS messages via |
+|              |                |        |          |             |                  |GMM                                                  |
+|CN#07         |24.011          |3.1.0   |004r1     |R99          |3.2.0             |Reintroduction of deleted arrow diagrams             |
+|CN#07         |24.011          |3.1.0   |005       |R99          |3.2.0             |Cleaning up the References                           |
+
+
+|TSGN                                                                                                                                            |
+
+
+Date |Meeting |TDoc |CR |Rev |Cat |Subject/Comment |New version | |2016-09 |CT#73 |CP-160489 |0045 |2 |F |RPDU transfer for EPS using Control Plane CIoT Optimization |13.2.0 | |2016-12 |CT#74 |CP-160723 |0046 |2 |F |SMS timer extension to support NB-S1 mode |13.3.0 | |2017-03 |CT#75 |CP-170110 |0047 |3 |F |SMS timer extension for the MS in WB-S1 mode |13.4.0 | |2017-03 |CT#75 |CP-170110 |0048 |2 |B |CM layer SDL updates for SMS transfer using Control Plane CIoT Optimization |13.4.0 | |2017-03 |CT#75 |CP-170110 |0049 | |F |SMS arrow diagram for SMS transfer using Control Plane CIoT Optimization |13.4.0 | |2017-03 |SA#75 | | | | |Upgrade to Rel-14 |14.0.0 | |2017-06 |CT#76 |CP-171092 |0051 |1 |F |Conditions on supporting SMS transfer when MS is attached for PS |14.1.0 | |2017-12 |CT#78 |CP-173050 |0054 |2 |A |Correction to SMS timers in NB-IoT |14.2.0 | |2017-12 |CT#78 |CP-173054 |0056 |1 |A |Correction to SMS timers for CE mode UE |14.2.0 | |2018-03 |CT#79 |CP-180077 |0057 |1 |B |Support for SMS in 5GS |15.0.0 | |2018-06 |CT#80 |CP-181058 |0058 |1 |C |Removal of one-step SMS |15.1.0 | |2018-09 |CT#81 |CP-182122 |0060 | |A |Correction on state transition diagrams for EPS when packet-switched service is used |15.2.0 | |2018-09 |CT#81 |CP-182128 |0061 | |F |SDL description CM layer for 5G |15.2.0 | |2019-03 |CT#83 |CP-190100 |0064 |1 |F |Usage of trigger to establish a PDN connection of non-IP type using the default APN to send indication to ESM entity |15.3.0 | |
+
+-----------------------
+MO-Wait
+
+
+
+For RP ACK
+
+
+
+1
+
+
+
+MNSMS-
+
+
+
+DATA-Req
+
+
+
+(RP ACK)
+
+
+
+MNSMS-
+
+
+
+ABORT-
+
+
+
+Req
+
+
+
+MNSMS-
+
+
+
+REL-Req
+
+
+
+5GMMSMS-
+
+
+
+ERROR-Ind
+
+
+
+CP-ERROR
+
+
+
+CP DATA
+
+
+
+CP ERROR
+
+
+
+MNSMS-
+
+
+
+ERROR-Ind
+
+
+
+MNSMS-
+
+
+
+ERROR-Ind
+
+
+
+Set TC1N
+
+
+
+MO-Wait
+
+
+
+For CP ACK
+
+
+
+5GMMSMS-
+
+
+
+REL-Req
+
+
+
+5GMMSMS-
+
+
+
+REL-Req
+
+
+
+MO-Idle
+
+
+
+
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+1
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+TC
+
+
+
+1
+
+
+
+N
+
+
+
+Expired
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+MO
+
+
+
+-
+
+
+
+Idle
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+N
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+Retx
+
+
+
+=
+
+
+
+max
+
+
+
+?
+
+
+
+Yes
+
+
+
+retx
+
+
+
+=
+
+
+
+retx
+
+
+
++
+
+
+
+1
+
+
+
+No
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+N
+
+
+
+0
+
+
+
+MO
+
+
+
+-
+
+
+
+IDLE
+
+
+
+1
+
+
+
+MO
+
+
+
+_
+
+
+
+Wait
+
+
+
+For RP ACK
+
+
+
+2
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP ACK
+
+
+
+MT
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ABORT
+
+
+
+-
+
+
+
+Req
+
+
+
+MT
+
+
+
+-
+
+
+
+Wait For
+
+
+
+CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+1
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+TC
+
+
+
+1
+
+
+
+N
+
+
+
+Expired
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+MT
+
+
+
+-
+
+
+
+Idle
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+N
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+Retx
+
+
+
+=
+
+
+
+max
+
+
+
+?
+
+
+
+Yes
+
+
+
+retx
+
+
+
+=
+
+
+
+retx
+
+
+
++
+
+
+
+1
+
+
+
+No
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+N
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+N
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+MT
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+MT
+
+
+
+-
+
+
+
+Idle
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ABORT
+
+
+
+-
+
+
+
+Req
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+DATA
+
+
+
+-
+
+
+
+Ind
+
+
+
+(
+
+
+
+RPDU
+
+
+
+)
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+MO
+
+
+
+-
+
+
+
+Idle
+
+
+
+0
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+EST
+
+
+
+-
+
+
+
+Req
+
+
+
+(
+
+
+
+CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+)
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+EST
+
+
+
+-
+
+
+
+Req
+
+
+
+(
+
+
+
+RP DATA
+
+
+
+)
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait For
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+SET TC
+
+
+
+1
+
+
+
+M
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ABORT
+
+
+
+-
+
+
+
+Req
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait For
+
+
+
+CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+1
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+TC
+
+
+
+1
+
+
+
+M
+
+
+
+Expired
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+MO
+
+
+
+-
+
+
+
+Idle
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+M
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+Retx
+
+
+
+=
+
+
+
+max
+
+
+
+?
+
+
+
+Yes
+
+
+
+retx
+
+
+
+=
+
+
+
+retx
+
+
+
++
+
+
+
+1
+
+
+
+No
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+M
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+M
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+MO
+
+
+
+-
+
+
+
+Idle
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ABORT
+
+
+
+-
+
+
+
+Req
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+DATA
+
+
+
+-
+
+
+
+Ind
+
+
+
+(
+
+
+
+RPDU
+
+
+
+)
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+0
+
+
+
+MO
+
+
+
+-
+
+
+
+IDLE
+
+
+
+1
+
+
+
+MO
+
+
+
+-
+
+
+
+5GMM
+
+
+
+Connection
+
+
+
+Pending
+
+
+
+3
+
+
+
+MO
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP DATA
+
+
+
+2
+
+
+
+MO
+
+
+
+_
+
+
+
+Wait
+
+
+
+For CP ACK
+
+
+
+MT
+
+
+
+-
+
+
+
+Wait
+
+
+
+For RP ACK
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+DATA
+
+
+
+-
+
+
+
+Req
+
+
+
+(
+
+
+
+RP ACK
+
+
+
+)
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MT
+
+
+
+-
+
+
+
+Idle
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ABORT
+
+
+
+-
+
+
+
+Req
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+CP
+
+
+
+-
+
+
+
+DATA
+
+
+
+MT
+
+
+
+-
+
+
+
+Wait For
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+1
+
+
+
+SET TC
+
+
+
+1
+
+
+
+M
+
+
+
+MT
+
+
+
+-
+
+
+
+Wait
+
+
+
+For CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+CP
+
+
+
+-
+
+
+
+ACK
+
+
+
+5GMMSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+REL
+
+
+
+-
+
+
+
+Req
+
+
+
+1
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+CP
+
+
+
+-
+
+
+
+ERROR
+
+
+
+TC
+
+
+
+1
+
+
+
+M
+
+
+
+Expired
+
+
+
+MT
+
+
+
+-
+
+
+
+Idle
+
+
+
+Set retx
+
+
+
+=
+
+
+
+Zero
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+M
+
+
+
+MNSMS
+
+
+
+-
+
+
+
+ERROR
+
+
+
+-
+
+
+
+Ind
+
+
+
+Retx
+
+
+
+=
+
+
+
+max
+
+
+
+?
+
+
+
+Yes
+
+
+
+retx
+
+
+
+=
+
+
+
+retx
+
+
+
++
+
+
+
+1
+
+
+
+No
+
+
+
+Reset TC
+
+
+
+1
+
+
+
+M
+
+
+
+
+
