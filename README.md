@@ -49,8 +49,9 @@ with this and anonymize the vendor in the
 
 ### 0. Using BaseSpec in IDA Pro
 BaseSpec contains python scripts based on IDA Pro APIs (IDAPython). To use
-BaseSpec, first load the firmware into IDA at the correct locations, which
-may require parsing of vendor-specific firmware file formats.
+BaseSpec, first load the baseband firmware of interest into IDA Pro at the
+correct locations, which may require parsing of vendor-specific firmware
+file formats.
 Then, import `load_ida.py` as a script file in IDA Pro (using Alt+F7).
 
 
